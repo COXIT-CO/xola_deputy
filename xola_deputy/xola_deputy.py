@@ -1,5 +1,6 @@
 """Main script which start all logic. Here we have 2 webhooks,
 and process date from request from XOLA and DEPUTY"""
+from datetime import datetime
 from flask import Flask, request, Response
 from xola_client import XolaClient
 from deputy_client import DeputyClient
@@ -22,9 +23,16 @@ def xola_webhook():
     if params is False:
         return Response(status=500)
     # first time we created shift in open block
-    id_shift = deputy.post_new_shift(params)
+    id_shift, date_shift = deputy.post_new_shift(params)
+
+    date_shift = datetime.fromisoformat(date_shift)
+    date_shift = date_shift.strftime("%Y-%m-%d")
+
+    unavailable_employee = deputy.get_people_unavailability(
+        date_shift)  # check who have a work
     id_employee = deputy.get_people_availability(
-        id_shift)  # watch who can do this
+        id_shift, unavailable_employee)
+
     params.update({
         "intRosterId": id_shift,
         "intRosterEmployee": id_employee
