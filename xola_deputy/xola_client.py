@@ -1,6 +1,7 @@
 """"`Have class XolaCLient,which connect to Xola API and get/post data from here"""
 import configparser
 from datetime import datetime
+from math import ceil
 import json
 import requests
 
@@ -45,56 +46,97 @@ class XolaClient():
         except requests.RequestException as ex:
             self.log.error("Unable to send post request to XOLA", exc_info=ex)
 
+    def get_data_from_event(self,event_id):
+        """
+        :param event_id: str. with event id
+        :return: response json format,with all fields
+        """
+        url = self.__url + "events/" + event_id
+        try:
+            response = requests.get(
+                url=url, headers=self.__headers)
+            return response
+        except requests.RequestException as ex:
+            self.log.error("Unable to send gey request to XOLA", exc_info=ex)
+
     def take_params_from_responce(self, request):
         """take data from json, and process them
         :param request: json format data
         :return: dict with parameters to deputy
          """
-        data = request.json["items"][0]["arrival"].split("-")  # list
-        data = [int(x) for x in data]
-        time = str(request.json["items"][0]["arrivalTime"])
-        hour, minute = int(time[:2]), int(time[2:])
-        time_start = self.convert_time(data[0], data[1], data[2], hour, minute)
-        duration = int(request.json["meta"]["abandonOrders"]
-                       [0]["items"][0]["experience"]["eventDuration"]) * 60
-        time_end = time_start + duration
+        event_id = request.json["data"]["items"][0]["event"]["id"]
+        response = self.get_data_from_event(event_id)
+
+        time_start = self.convert_time(response.json()["start"])
+        time_end = self.convert_time(response.json()["end"])
+        experience_id = response.json()["experience"]["id"]
+        ticket_count = response.json()["quantity"]["reserved"]#all ticket for 1 event
+
+        area = self.compare_experience_and_area(experience_id)
+        shift_count = area["shift_count"]
+
         params = {
             "intStartTimestamp": time_start,
             "intEndTimestamp": time_end,
-            "intOpunitId": 3,
+            "intOpunitId": area["area_id"],
         }
-        return params
+
+        number_shifts = self.calculation_of_guids(shift_count, ticket_count)
+
+        return params, number_shifts
+
+    def start(self, request):
+        """starting"""
+        try:
+            params, number_shifts = self.take_params_from_responce(request)
+            return params, number_shifts
+        except (ValueError, TypeError):
+            self.log.error("Bad JSON data")
+            return False
+
 
     @staticmethod
-    def convert_time(year, month, day, hour, minute):
+    def calculation_of_guids(shift_count, ticket_count):
+        """
+        :param shift_count: number max ticket for 1 person
+        :param ticket_count: all tickets which reserved in event
+        :return: how many new shifts we have to do
+        """
+        if shift_count == 1: #we don`t need divine ticket on guids|do 1 shift
+            return 1
+        if ticket_count < shift_count : # 20<shift_count<25
+            return 1
+        else:
+            return ceil(ticket_count/shift_count)
+
+    @staticmethod
+    def compare_experience_and_area(experience_id):
+        """
+        :param experience_id: id experience from xola
+        :return: area id and ticket divine to deputy
+        """
+        with open("data_file.json", "r") as write_file:
+            dani = json.load(write_file)
+        for exp in dani:
+            if exp["experience_id"] == experience_id:
+                return exp["area"]
+
+    @staticmethod
+    def convert_time(time):
         """change data and time into UNIX time stamp
-        :param year: correct year
-        :param month: correct month
-        :param day: correct day
-        :param hour: correct hour
-        :param minute: correct minute
+        :param time: time format in iso format
 
         :return: unix time stamp
         """
-        data_time = datetime(year, month, day, hour, minute)
-        timestamp = data_time.timestamp()
+        timestamp = datetime.fromisoformat(time).timestamp()
         return int(timestamp)
 
     @staticmethod
     def take_xola_settings(email, password):
         """"Get APi KEY from xola """
         response = requests.get(
-            'https://sandbox.xola.com/api/users/me',
+            'https://xola.com/api/users/me',
             auth=(
                 email,
                 password))
         return response.json()["apiKey"], response.json()["id"]
-
-    def start(self, request):
-        """starting"""
-        try:
-            params = self.take_params_from_responce(request)
-            return params
-        except (ValueError, TypeError):
-            self.log.error("Bad JSON data")
-            return False

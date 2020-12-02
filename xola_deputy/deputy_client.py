@@ -25,7 +25,7 @@ class DeputyClient():
     def post_new_shift(self, params_for_deputy):
         """post a new shift
         :param params_for_deputy: data to post request
-        :return: str. id shift
+        :return: str. id shift, and correct date
         """
         json_mylist = json.dumps(params_for_deputy)
         data = f"{json_mylist}"
@@ -33,7 +33,12 @@ class DeputyClient():
         try:
             response = requests.post(
                 url=url, headers=self.__headers, data=data)
-            return str(response.json()["Id"]), (response.json()["Date"])
+            print(response.json())
+            return str(response.json()["Id"]), response.json()["Date"]
+        except KeyError as ex:
+            self.log.warning(
+                "Bad area id",
+                exc_info=ex)
         except requests.RequestException as ex:
             self.log.error(
                 "Unable to send post request to DEPUTY",
