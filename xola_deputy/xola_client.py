@@ -26,7 +26,7 @@ class XolaClient():
         :return: bool, false if something wrong, true if all good
         """
         url = self.__url + "users/" + self.__user_id + "/hooks"
-        param = {"eventName": "order.create", "url": self.public_url+"/xola"}
+        param = {"eventName": "order.create", "url": self.public_url + "/xola"}
         json_mylist = json.dumps(param)
         data = f"{json_mylist}"
         try:
@@ -46,7 +46,7 @@ class XolaClient():
         except requests.RequestException as ex:
             self.log.error("Unable to send post request to XOLA", exc_info=ex)
 
-    def get_data_from_event(self,event_id):
+    def get_data_from_event(self, event_id):
         """
         :param event_id: str. with event id
         :return: response json format,with all fields
@@ -70,9 +70,13 @@ class XolaClient():
         time_start = self.convert_time(response.json()["start"])
         time_end = self.convert_time(response.json()["end"])
         experience_id = response.json()["experience"]["id"]
-        ticket_count = response.json()["quantity"]["reserved"]#all ticket for 1 event
+        # all ticket for 1 event
+        ticket_count = response.json()["quantity"]["reserved"]
 
         area = self.compare_experience_and_area(experience_id)
+        if area is False:
+            self.log.error("Can not find experience in json file")
+            raise ValueError
         shift_count = area["shift_count"]
 
         params = {
@@ -94,7 +98,6 @@ class XolaClient():
             self.log.error("Bad JSON data")
             return False
 
-
     @staticmethod
     def calculation_of_guids(shift_count, ticket_count):
         """
@@ -102,12 +105,11 @@ class XolaClient():
         :param ticket_count: all tickets which reserved in event
         :return: how many new shifts we have to do
         """
-        if shift_count == 1: #we don`t need divine ticket on guids|do 1 shift
+        if shift_count == 1:  # we don`t need divine ticket on guids|do 1 shift
             return 1
-        if ticket_count < shift_count : # 20<shift_count<25
+        if ticket_count < shift_count:  # 20<shift_count<25
             return 1
-        else:
-            return ceil(ticket_count/shift_count)
+        return ceil(ticket_count / shift_count)
 
     @staticmethod
     def compare_experience_and_area(experience_id):
@@ -120,6 +122,7 @@ class XolaClient():
         for exp in dani:
             if exp["experience_id"] == experience_id:
                 return exp["area"]
+        return False
 
     @staticmethod
     def convert_time(time):

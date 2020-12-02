@@ -22,7 +22,7 @@ def xola_webhook():
     params, number_shifts = xola.start(request)
     if params is False:
         return Response(status=500)
-    for i in range(number_shifts):
+    for _ in range(number_shifts):
         # first time we created shift in open block
         id_shift, date_shift = deputy.post_new_shift(params)
 
