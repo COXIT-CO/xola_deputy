@@ -39,6 +39,10 @@ def xola_webhook():
             "intRosterEmployee": id_employee
         })
         deputy.post_new_shift(params)
+        name_of_employee = deputy.get_employee_name(id_employee)
+        if xola.post_guides_for_event(name_of_employee) is False:
+            return Response(status=500)
+
     return Response(status=200)
 
 

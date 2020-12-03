@@ -44,18 +44,6 @@ class DeputyClient():
                 "Unable to send post request to DEPUTY",
                 exc_info=ex)
 
-    @staticmethod
-    def check_all_job_employee(unavailable_employee):
-        """
-        create dictionary where take e less worked employee
-        :param unavailable_employee:
-        :return: employee who have a less work
-        """
-        job_employees = Counter()
-        for job in unavailable_employee:
-            job_employees[job] += 1
-        return (job_employees.most_common()[-1])[0]
-
     def get_people_unavailability(self, data):
         """MAke post request , take all shifts,and search which people have a work
         :param data: in which data we looking for shift
@@ -105,3 +93,33 @@ class DeputyClient():
             self.log.error(
                 "Unable to send post request to DEPUTY",
                 exc_info=ex)
+
+    def get_employee_name(self,id_employee):
+        """
+        make get request to deputy,take employee name
+        :param employee_id:
+        :return: name of employee
+        """
+        url = self.__url + 'supervise/employee/' + id_employee
+        try:
+            response = requests.get(url=url, headers=self.__headers, )
+            return response.json()["DisplayName"]
+        except requests.RequestException as ex:
+            self.log.error(
+                "Unable to send post request to DEPUTY",
+                exc_info=ex)
+
+    @staticmethod
+    def check_all_job_employee(unavailable_employee):
+        """
+        create dictionary where take e less worked employee
+        :param unavailable_employee:
+        :return: employee who have a less work
+        """
+        job_employees = Counter()
+        for job in unavailable_employee:
+            job_employees[job] += 1
+        return (job_employees.most_common()[-1])[0]
+
+
+
