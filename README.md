@@ -10,7 +10,7 @@ Run pip install -r requirements.txt to install all required libraries.
 
 #Deputy API set up
 Users have to generate `deputy_access_token` in deputy web site.
-For more detailed instruction read Zoho CRM API Documentation: https://www.deputy.com/api-doc/API/Authentication
+For more detailed instruction read Deputy API Documentation: https://www.deputy.com/api-doc/API/Authentication
 
 #XOLA API set up
 Users just need sing up in xola.com. This programe need e-mail and password

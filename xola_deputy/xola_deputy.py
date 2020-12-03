@@ -39,6 +39,8 @@ def xola_webhook():
             "intRosterEmployee": id_employee
         })
         deputy.post_new_shift(params)
+
+    logger.info("successfully post shift")
     return Response(status=200)
 
 

@@ -53,7 +53,6 @@ def initialize_variables():
 if __name__ == '__main__':
     if path.isfile('xola_deputy/Settings.ini'):
         key = input("Do you really wanna change your settings?(y/n) ")
-        print (key)
         if key == "y":
             initialize_variables()
         else:
