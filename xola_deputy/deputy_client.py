@@ -33,7 +33,6 @@ class DeputyClient():
         try:
             response = requests.post(
                 url=url, headers=self.__headers, data=data)
-            print(response.json())
             return str(response.json()["Id"]), response.json()["Date"]
         except KeyError as ex:
             self.log.warning(
