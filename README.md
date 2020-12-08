@@ -6,7 +6,11 @@ Python 3.9
 
 Run pip install -r requirements.txt to install all required libraries.
 
+Deputy account, with access token (permanent token)
 
+Xola account ( seller )
+
+Public url ( You can use ngrok )
 
 #Deputy API set up
 Users have to generate `deputy_access_token` in deputy web site.

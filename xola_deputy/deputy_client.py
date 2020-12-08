@@ -93,7 +93,7 @@ class DeputyClient():
                 "Unable to send post request to DEPUTY",
                 exc_info=ex)
 
-    def get_employee_name(self,id_employee):
+    def get_employee_name(self, id_employee):
         """
         make get request to deputy,take employee name
         :param employee_id:
@@ -119,6 +119,3 @@ class DeputyClient():
         for job in unavailable_employee:
             job_employees[job] += 1
         return (job_employees.most_common()[-1])[0]
-
-
-

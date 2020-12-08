@@ -11,6 +11,7 @@ class XolaClient():
     __url = "https://xola.com/api/"
     _event_id = ""
     _seller_id = ""
+
     def __init__(self, logger):
         config = configparser.ConfigParser()
         config.read('Settings.ini')
@@ -49,6 +50,7 @@ class XolaClient():
 
     def get_data_from_event(self,):
         """
+        Make request to XOLA events. Take all data from specific event
         :param event_id: str. with event id
         :return: response json format,with all fields
         """
@@ -61,7 +63,7 @@ class XolaClient():
             self.log.error("Unable to send get request to XOLA", exc_info=ex)
 
     def take_params_from_responce(self, request):
-        """take data from json, and process them
+        """Take data from json event request, and process them
         :param request: json format data
         :return: dict with parameters to deputy
          """
@@ -87,13 +89,22 @@ class XolaClient():
             "intOpunitId": area["area_id"],
         }
 
-        number_shifts = self.calculation_of_guids(shift_count, ticket_count)
+        number_shifts = self.calculation_of_employee(shift_count, ticket_count)
 
         return params, number_shifts
 
+    def start(self, request):
+        """starting"""
+        try:
+            params, number_shifts = self.take_params_from_responce(request)
+            return params, number_shifts
+        except (ValueError, TypeError):
+            self.log.error("Bad JSON data")
+            return False
+
     def get_list_of_guids(self):
         """
-        make get request to xola,find all available guides
+        make get request to xola, find all available guides
         :return: list of name all guides
         """
         url = self.__url + "sellers/" + self._seller_id + "/guides"
@@ -122,7 +133,7 @@ class XolaClient():
 
         if guide_id == "":
             self.log.warning("Can not find employee in xola guides")
-            return
+            return False
         return guide_id
 
     def post_guides_for_event(self, name_of_employee):
@@ -132,6 +143,8 @@ class XolaClient():
         :return: trye if successfully, false if have trables
         """
         guide_id = self.take_guide_id(name_of_employee)
+        if guide_id is False:
+            return False
         url = self.__url + "events/" + self._event_id + "/guides"
         param = {"id": {"id": guide_id}}
         json_mylist = json.dumps(param)
@@ -140,10 +153,11 @@ class XolaClient():
             response = requests.post(
                 url=url, headers=self.__headers, data=data)
             if response.status_code != 201:
-                self.log.error("Can not assigned guides "+response.text)
+                self.log.error("Can not assigned guides " + response.text)
                 return False
             if response.status_code == 409:
-                self.log.error("The guide is already assigned to an overlapping event.")
+                self.log.error(
+                    "The guide is already assigned to an overlapping event.")
                 return False
             self.log.info("Update successfully sent to XOLA")
             return True
@@ -151,17 +165,8 @@ class XolaClient():
         except requests.RequestException as ex:
             self.log.error("Unable to send get request to XOLA", exc_info=ex)
 
-    def start(self, request):
-        """starting"""
-        try:
-            params, number_shifts = self.take_params_from_responce(request)
-            return params, number_shifts
-        except (ValueError, TypeError):
-            self.log.error("Bad JSON data")
-            return False
-
     @staticmethod
-    def calculation_of_guids(shift_count, ticket_count):
+    def calculation_of_employee(shift_count, ticket_count):
         """
         :param shift_count: number max ticket for 1 person
         :param ticket_count: all tickets which reserved in event
