@@ -19,4 +19,4 @@ jobs:
         pip install pylint
     - name: Analysing the code with pylint
       run: |
-        pylint `ls -R|grep .py$|xargs`
+        pylint xola_deputy/xola_client.py xola_deputy/xola_deputy.py xola_deputy/deputy_client.py xola_deputy/config.py xola_deputy/logger.py setup.py
