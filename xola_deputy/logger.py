@@ -3,7 +3,7 @@ import configparser
 
 import logging
 from logging.config import dictConfig
-from . import config
+from config_logger import LOG_CONFIG
 
 
 class LoggerClient():
@@ -17,10 +17,10 @@ class LoggerClient():
 
     def logger_settings(self):
         """create logger object and do some configuration with them"""
-        config.LOG_CONFIG['root']['handlers'].append(self.logmode)
+        LOG_CONFIG['root']['handlers'].append(self.logmode)
         flask_log = logging.getLogger('werkzeug')
         flask_log.setLevel(logging.ERROR)
-        dictConfig(config.LOG_CONFIG)
+        dictConfig(LOG_CONFIG)
         self.logger = logging.getLogger()
 
     def get_logger(self):

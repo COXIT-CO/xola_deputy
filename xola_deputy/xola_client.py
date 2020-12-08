@@ -1,4 +1,5 @@
-""""`Have class XolaCLient,which connect to Xola API and get/post data from here"""
+""""Have class XolaCLient,which connect to Xola API and get/post data from here.
+    Also process data from xola-webhook for parameters to deputy post request"""
 import configparser
 from datetime import datetime
 from math import ceil
