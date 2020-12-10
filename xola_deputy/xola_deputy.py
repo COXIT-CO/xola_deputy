@@ -19,7 +19,7 @@ def xola_webhook():
         Post new shift with this parameters , and check which employee free.
         :return: code 200 is all good, code 500 - arose problem
     """
-    params, number_shifts = xola.start(request)
+    params, number_shifts = xola.start(request.json)
     if params is False:
         return Response(status=500)
     for _ in range(number_shifts):
@@ -33,7 +33,8 @@ def xola_webhook():
             date_shift)  # check who have a work
         id_employee = deputy.get_people_availability(
             id_shift, unavailable_employee)
-
+        if id_employee is False:
+            return Response(status=500)# think if we sometime have this situation
         params.update({
             "intRosterId": id_shift,
             "intRosterEmployee": id_employee
@@ -41,6 +42,8 @@ def xola_webhook():
         deputy.post_new_shift(params)  # post shift for employee
 
         name_of_employee = deputy.get_employee_name(id_employee)
+        if name_of_employee is False:
+            return Response(status=500)
         if xola.post_guides_for_event(name_of_employee) is False:
             return Response(status=500)
     logger.info("Successfully post shift, guides, employee ")

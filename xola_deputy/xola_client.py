@@ -23,13 +23,13 @@ class XolaClient():
         }
         self.log = logger
 
-    def subscribe_to_webhook(self,):
+    def subscribe_to_webhook(self,eventName = "order.create"):
         """do post request to xola api: subscribe to weebhook(order.created)
         :param public_url: public url,where post notification
         :return: bool, false if something wrong, true if all good
         """
         url = self.__url + "users/" + self.__user_id + "/hooks"
-        param = {"eventName": "order.create", "url": self.public_url + "/xola"}
+        param = {"eventName": eventName, "url": self.public_url + "/xola"}
         json_mylist = json.dumps(param)
         data = f"{json_mylist}"
         try:
@@ -68,7 +68,7 @@ class XolaClient():
         :param request: json format data
         :return: dict with parameters to deputy
          """
-        self._event_id = request.json["data"]["items"][0]["event"]["id"]
+        self._event_id = request["data"]["items"][0]["event"]["id"]
         response = self.get_data_from_event()
 
         time_start = self.convert_time(response.json()["start"])

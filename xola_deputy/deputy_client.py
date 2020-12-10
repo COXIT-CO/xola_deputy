@@ -4,6 +4,8 @@ import configparser
 from collections import Counter
 
 import requests
+from logger import LoggerClient
+logger = LoggerClient().get_logger()
 
 
 class DeputyClient():
@@ -36,7 +38,7 @@ class DeputyClient():
             return str(response.json()["Id"]), response.json()["Date"]
         except KeyError as ex:
             self.log.warning(
-                "Bad area id",
+                "Bad parameters for post request",
                 exc_info=ex)
         except requests.RequestException as ex:
             self.log.error(
@@ -88,6 +90,7 @@ class DeputyClient():
 
         except IndexError:
             self.log.warning("Not Available employee")
+            return False
         except requests.RequestException as ex:
             self.log.error(
                 "Unable to send post request to DEPUTY",
@@ -102,7 +105,10 @@ class DeputyClient():
         url = self.__url + 'supervise/employee/' + id_employee
         try:
             response = requests.get(url=url, headers=self.__headers, )
-            return response.json()["DisplayName"]
+            return response.json()["DisplayName"], response.status_code
+        except KeyError:
+            self.log.warning("Can not find employee with transferred id")
+            return False
         except requests.RequestException as ex:
             self.log.error(
                 "Unable to send post request to DEPUTY",
