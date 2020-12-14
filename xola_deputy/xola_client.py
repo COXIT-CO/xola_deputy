@@ -74,6 +74,7 @@ class XolaClient():
         time_start = self.convert_time(response.json()["start"])
         time_end = self.convert_time(response.json()["end"])
         experience_id = response.json()["experience"]["id"]
+        title = response.json()["title"]
         # all ticket for 1 event
         ticket_count = response.json()["quantity"]["reserved"]
         self._seller_id = response.json()["seller"]["id"]
@@ -92,13 +93,13 @@ class XolaClient():
 
         number_shifts = self.calculation_of_employee(shift_count, ticket_count)
 
-        return params, number_shifts
+        return params, number_shifts, title
 
     def start(self, request):
         """starting"""
         try:
-            params, number_shifts = self.take_params_from_responce(request)
-            return params, number_shifts
+            params, number_shifts, title = self.take_params_from_responce(request)
+            return params, number_shifts, title
         except (ValueError, TypeError):
             self.log.error("Bad JSON data")
             return False

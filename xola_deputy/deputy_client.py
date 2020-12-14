@@ -22,6 +22,7 @@ class DeputyClient():
             'Authorization': 'OAuth ' + deputy_access_token,
         }
         self.__url = 'https://' + deputy_id + '/api/v1/'
+        self.public_url = config['URL']['public_url']
         self.log = logger
 
     def post_new_shift(self, params_for_deputy):
@@ -113,6 +114,67 @@ class DeputyClient():
             self.log.error(
                 "Unable to send post request to DEPUTY",
                 exc_info=ex)
+
+    def get_employee_unavail(self):
+        """
+         make get request to deputy,take employee unavailability
+        :return: when employee have unavailability
+        """
+        url = self.__url + 'supervise/unavail/'
+        try:
+            response = requests.get(url=url, headers=self.__headers, )
+            if not response.json():
+                return False
+            list_of_em = []
+            for employee in response.json():
+                list_of_em.append((employee["StartTime"], employee["EndTime"]))
+            return list_of_em
+        except requests.RequestException as ex:
+            self.log.error(
+                "Unable to send post request to DEPUTY",
+                exc_info=ex)
+
+    def post_params_for_webhook(self,topic,address):
+        """
+        make post request to deputy for webhook
+        :param topic: what we waiting
+        :param address: where data come
+        :return: status code of response
+        """
+        params_for_webhooks = {
+            "Topic": topic,
+            "Enabled": 1,
+            "Type": "URL",
+            "Address": self.public_url + address
+        }
+        url = self.__url + 'resource/Webhook'
+        data = self.update_params_for_post_deputy_style(params_for_webhooks)
+        response  = requests.post(url=url, headers=self.__headers, data=data)
+        return response.status_code
+
+    def subscribe_to_webhooks(self):
+        """
+        make 3 post request for subscribe webhooks
+        :return: true if all good
+        """
+        data_for_webhooks = [("Employee.Delete","/delete_employee"),
+                             ("Employee.Insert","/insert_employee"),
+                             ("EmployeeAvailability.Insert","/unvial_employee")]
+        for data in data_for_webhooks:
+            if self.post_params_for_webhook(data[0],data[1]) != 200:
+                return False
+        return True
+
+    @staticmethod
+    def update_params_for_post_deputy_style(params):
+        """
+        take python dict and change it for json stringify format
+        :param params: python dict
+        :return: json stringify
+        """
+        json_mylist = json.dumps(params)
+        data = f"{json_mylist}"
+        return data
 
     @staticmethod
     def check_all_job_employee(unavailable_employee):
