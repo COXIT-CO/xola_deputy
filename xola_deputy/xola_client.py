@@ -4,8 +4,9 @@ import configparser
 from datetime import datetime
 from math import ceil
 import json
-import requests
 import csv
+import requests
+
 from setup import CONFIG_FILE_NAME
 
 HTTP_CREATED = 201
