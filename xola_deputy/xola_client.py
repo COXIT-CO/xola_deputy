@@ -5,12 +5,14 @@ from datetime import datetime
 from math import ceil
 import json
 import requests
-
+import csv
 from setup import CONFIG_FILE_NAME
 
 HTTP_CREATED = 201
 HTTP_CONFLICT = 409
 
+FILE_NAME_MAPPING = "mapping.csv"
+DELIMITER = ","
 
 class XolaClient():
     """connect to XOLA API"""
@@ -83,27 +85,27 @@ class XolaClient():
         ticket_count = response.json()["quantity"]["reserved"]
         self._seller_id = response.json()["seller"]["id"]
 
-        area = self.compare_experience_and_area(experience_id)
-        if area is False:
+        mapping = self.compare_experience_and_area(experience_id)
+        if mapping is False:
             self.log.error("Can not find experience in json file")
             raise ValueError
-        shift_count = area["shift_count"]
+        shift_count = int(mapping["Shifts logic"])
 
         params = {
             "intStartTimestamp": time_start,
             "intEndTimestamp": time_end,
-            "intOpunitId": area["area_id"] + 2,
+            "intOpunitId": int(mapping["Area"])+2,
         }
 
         number_shifts = self.calculation_of_employee(shift_count, ticket_count)
 
-        return params, number_shifts
+        return params, number_shifts, mapping
 
     def start(self, request):
         """starting"""
         try:
-            params, number_shifts = self.take_params_from_responce(request)
-            return params, number_shifts
+            params, number_shifts, mapping = self.take_params_from_responce(request)
+            return params, number_shifts, mapping
         except (ValueError, TypeError):
             self.log.error("Bad JSON data")
             return False
@@ -188,13 +190,13 @@ class XolaClient():
     def compare_experience_and_area(experience_id):
         """
         :param experience_id: id experience from xola
-        :return: area id and ticket divine to deputy
+        :return: mapping dict
         """
-        with open("data_file.json", "r") as write_file:
-            dani = json.load(write_file)
-        for exp in dani:
-            if exp["experience_id"] == experience_id:
-                return exp["area"]
+        with open(FILE_NAME_MAPPING) as r_file:
+            file_reader = csv.DictReader(r_file, delimiter=DELIMITER)
+            for exp_dict in file_reader:
+                if exp_dict["experience_id"] == experience_id:
+                    return exp_dict
         return False
 
     @staticmethod

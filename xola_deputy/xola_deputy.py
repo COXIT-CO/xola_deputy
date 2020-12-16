@@ -19,7 +19,7 @@ def xola_deputy_run():
         Post new shift with this parameters , and check which employee free.
         :return: code 200 is all good, code 500 - arose problem
     """
-    params, number_shifts = xola.start(request)
+    params, number_shifts, mapping = xola.start(request)
     if params is False:
         return Response(status=500)
     for _ in range(number_shifts):
@@ -29,8 +29,10 @@ def xola_deputy_run():
         date_shift = datetime.fromisoformat(date_shift)
         date_shift = date_shift.strftime("%Y-%m-%d")
 
+        id_location = mapping["Area"]
+
         unavailable_employee = deputy.get_people_unavailability(
-            date_shift)  # check who have a work
+            date_shift, id_location)  # check who have a work
         id_employee = deputy.get_people_availability(
             id_shift, unavailable_employee)
 
@@ -38,7 +40,7 @@ def xola_deputy_run():
             "intRosterId": id_shift,
             "intRosterEmployee": id_employee
         })
-        deputy.post_new_shift(params)  # post shift for employee
+        deputy.post_new_shift(params) # post shift for employee
 
         name_of_employee = deputy.get_employee_name(id_employee)
         if xola.post_guides_for_event(name_of_employee) is False:
