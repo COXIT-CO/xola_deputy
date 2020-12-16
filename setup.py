@@ -1,17 +1,20 @@
-""""This script creat config file, and u must run this script first of all"""
+"""This script creates a config file for the main script.
+ This should be run once at the very beginning before
+the main script run (zola_deputy.py).
+Then it should be run every time you want to reconfigure the script."""
 import sys
 import argparse
 import configparser
 from os import path
 
-from xola_deputy import xola_client
+CONFIG_FILE_NAME = 'Settings.ini'
 
 
 def create_parser():
-    """Creat parameters passing from console"""
+    """Creates parameters passed from console"""
     parser = argparse.ArgumentParser()
-    parser.add_argument('-ex', '--email_xola')
-    parser.add_argument('-px', '--password_xola')
+    parser.add_argument('-xak', '--x_api_key')
+    parser.add_argument('-ui', '--user_id')
     parser.add_argument('-dat', '--deputy_access_token')
     parser.add_argument('-did', '--deputy_id')
     parser.add_argument('-url', '--url')
@@ -26,13 +29,12 @@ def initialize_variables():
     config = configparser.ConfigParser()
     parser = create_parser()
     namespace = parser.parse_args(sys.argv[1:])
+    if len(sys.argv) == 1:
+        sys.exit(
+            "Please check if you run script with parameters . Script is terminated")
 
     config.add_section('XOLA')
-    xola_email = namespace.email_xola
-    xola_password = namespace.password_xola
-    x_api_key, user_id = xola_client.XolaClient.take_xola_settings(
-        xola_email, xola_password)
-    config["XOLA"]["x_api_key"], config["XOLA"]["user_id"] = x_api_key, user_id
+    config["XOLA"]["x_api_key"], config["XOLA"]["user_id"] = namespace.x_api_key, namespace.user_id
 
     config.add_section('DEPUTY')
     deputy_access_token = namespace.deputy_access_token

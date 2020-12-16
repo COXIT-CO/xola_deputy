@@ -6,6 +6,11 @@ from math import ceil
 import json
 import requests
 
+from setup import CONFIG_FILE_NAME
+
+HTTP_CREATED = 201
+HTTP_CONFLICT = 409
+
 
 class XolaClient():
     """connect to XOLA API"""
@@ -15,7 +20,7 @@ class XolaClient():
 
     def __init__(self, logger):
         config = configparser.ConfigParser()
-        config.read('Settings.ini')
+        config.read(CONFIG_FILE_NAME)
         self.__x_api_key, self.__user_id = config['XOLA']['x_api_key'], config['XOLA']['user_id']
         self.public_url = config['URL']['public_url']
         self.__headers = {
@@ -35,8 +40,8 @@ class XolaClient():
         try:
             response = requests.post(
                 url=url, headers=self.__headers, data=data)
-            if response.status_code != 201:
-                if response.status_code == 409:
+            if response.status_code != HTTP_CREATED:
+                if response.status_code == HTTP_CONFLICT:
                     self.log.warning("Webhook already subscribe")
                     return False
                 self.log.error("Subscription failed " +
@@ -87,7 +92,7 @@ class XolaClient():
         params = {
             "intStartTimestamp": time_start,
             "intEndTimestamp": time_end,
-            "intOpunitId": area["area_id"],
+            "intOpunitId": area["area_id"] + 2,
         }
 
         number_shifts = self.calculation_of_employee(shift_count, ticket_count)
@@ -153,10 +158,10 @@ class XolaClient():
         try:
             response = requests.post(
                 url=url, headers=self.__headers, data=data)
-            if response.status_code != 201:
+            if response.status_code != HTTP_CREATED:
                 self.log.error("Can not assigned guides " + response.text)
                 return False
-            if response.status_code == 409:
+            if response.status_code == HTTP_CONFLICT:
                 self.log.error(
                     "The guide is already assigned to an overlapping event.")
                 return False
@@ -201,13 +206,3 @@ class XolaClient():
         """
         timestamp = datetime.fromisoformat(time).timestamp()
         return int(timestamp)
-
-    @staticmethod
-    def take_xola_settings(email, password):
-        """"Get APi KEY from xola """
-        response = requests.get(
-            'https://xola.com/api/users/me',
-            auth=(
-                email,
-                password))
-        return response.json()["apiKey"], response.json()["id"]

@@ -13,7 +13,7 @@ deputy = DeputyClient(logger)
 
 
 @app.route("/xola", methods=['POST'])
-def xola_webhook():
+def xola_deputy_run():
     """Take response from xola notification about order.
         Create parameters for deputy POST request with data from XOLA.
         Post new shift with this parameters , and check which employee free.

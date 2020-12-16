@@ -5,6 +5,8 @@ from collections import Counter
 
 import requests
 
+from setup import CONFIG_FILE_NAME
+
 
 class DeputyClient():
     """"Connect to Deputy API"""
@@ -13,7 +15,7 @@ class DeputyClient():
 
     def __init__(self, logger):
         config = configparser.ConfigParser()
-        config.read('Settings.ini')
+        config.read(CONFIG_FILE_NAME)
         deputy_access_token, deputy_id = config["DEPUTY"]["deputy_access_token"],\
             config["DEPUTY"]["deputy_id"]
         self.__headers = {
