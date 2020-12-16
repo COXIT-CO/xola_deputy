@@ -5,13 +5,12 @@ from flask import Flask, request, Response
 from xola_client import XolaClient
 from deputy_client import DeputyClient
 from logger import LoggerClient
-from spreadsheet_api import SpreadsheetAPI
+from auto_change_sheets import change_cell,
 
 app = Flask(__name__)
 logging = LoggerClient().get_logger()
 xola = XolaClient(logging)
 deputy = DeputyClient(logging)
-sheets = SpreadsheetAPI()
 
 
 @app.route("/xola", methods=['POST'])
@@ -42,13 +41,13 @@ def xola_deputy_run():
             "intRosterEmployee": id_employee
         })
         deputy.post_new_shift(params)  # post shift for employee
-
+        #sheets.change_availability_by_value(title, date_shift_unix, -1)
+        change_cell(params["intStartTimestamp"], params["intEndTimestamp"], title)
         name_of_employee = deputy.get_employee_name(id_employee)
         if name_of_employee is False:
             return Response(status=500)
         if xola.post_guides_for_event(name_of_employee) is False:
             return Response(status=500)
-        sheets.change_availability_by_value(title, date_shift_unix, -1)
 
     logging.info("Successfully post shift, guides, employee ")
 
@@ -56,7 +55,8 @@ def xola_deputy_run():
 
 @app.route("/delete_employee", methods=['POST'])
 def deputy_delet():
-    sheets.change_availability_by_value("Aliens",1607601600,-1)
+    #sheets.change_availability_by_value("Aliens",1607601600,-1)
+    #change_sheets(30,)
     return Response(status=200)
 
 @app.route("/insert_employee", methods=['POST'])
@@ -70,12 +70,12 @@ def deputy_unvial():
     list_of_unvial = deputy.get_employee_unavail()#list of (timestar,timeend) unix
     if list_of_unvial is False:
         return Response(status=500)
-    sheets.change_availability_by_value("Aliens",1607601600,-1)
+    #sheets.change_availability_by_value("Aliens",1607601600,-1)
     return Response(status=200)
 
 if __name__ == '__main__':
     #move to setup
     if xola.subscribe_to_webhook() is False:
         logging.warning("Can not subscribe to webhook")
-    deputy.subscribe_to_webhooks()
+    #deputy.subscribe_to_webhooks()
     app.run(host="0.0.0.0", port=5000)

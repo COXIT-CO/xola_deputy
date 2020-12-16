@@ -1,6 +1,13 @@
 # Take time pf shifts from DEPUTY and post all free employee in GOOGLE SHEETS
-from xola_deputy import deputy, sheets
 from datetime import datetime
+
+from deputy_client import DeputyClient
+from logger import LoggerClient
+from spreadsheet_api import SpreadsheetAPI
+
+sheets = SpreadsheetAPI()
+logging = LoggerClient().get_logger()
+deputy = DeputyClient(logging)
 
 START_TIME = " 6:00"  # start time in google sheets
 END_TIME = " 23:30"  # end time in google sheets
@@ -74,3 +81,8 @@ def change_sheets(count_of_days, id_location):
         number_of_days += 1
 
     return list_of_free_employee
+
+def change_cell(start_time,end_time, title):
+    while start_time <= end_time:
+        sheets.change_availability_by_value(title, start_time, -1)
+        start_time += DELAY

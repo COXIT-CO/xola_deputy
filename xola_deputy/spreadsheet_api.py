@@ -96,6 +96,13 @@ class SpreadsheetAPI:
         self.spreadsheet_service = build('sheets', 'v4', credentials=creds).spreadsheets()
         self.spreadsheet_id = config['GOOGLE']['spreadsheet_id']
 
+        values = self._read_data(self.spreadsheet_service.get(
+            spreadsheetId=self.spreadsheet_id
+        ).execute().get('sheets', '')[0]['properties']['title'] + '!A1:ZZZ1000')
+
+        self.time_values = values[0]
+        self.date_values = [i[0] for i in values]
+
     @property
     def sheets(self):
         """
@@ -119,16 +126,19 @@ class SpreadsheetAPI:
         After it looking for cell in sheet with provided title, using converted date variables
         In the end function return value from cell in sheet
 
-        Return value from cell
+        Return value from cell if date is valid, in another case - return None
         """
         time_index, date_index = self._get_cell_indexes_by_timestamp(sheet_title, date)
         range_name = self._create_range_name(sheet_title, time_index, date_index)
+
+        if range_name is None:
+            return None
+
         result = self._read_data(range_name)
         if result is None:
             return 0
         else:
-            return self._read_data(range_name)[0][0]
-
+            return result[0][0]
 
     def change_availability(self, sheet_title, date, value):
         """
@@ -144,13 +154,16 @@ class SpreadsheetAPI:
         ----------
 
         Function looking for cell in sheet and insert new value to this cell
-
+        Return value of cell if date is valid, in another case - return None
         """
 
         time_index, date_index = self._get_cell_indexes_by_timestamp(sheet_title, date)
         range_name = self._create_range_name(sheet_title, time_index, date_index)
 
-        self._update_data(range_name, value)
+        if range_name is None:
+            return None
+
+        return self._update_data(range_name, value)
 
     def change_availability_by_value(self, sheet_title, date, value):
         """
@@ -166,7 +179,7 @@ class SpreadsheetAPI:
         ----------
 
         Function looking for cell in sheet and change it by new value
-
+        Return value of cell if date is valid, in another case - return None
         """
         try:
             old_value = int(self.get_availability(sheet_title, date))
@@ -174,7 +187,7 @@ class SpreadsheetAPI:
         except ValueError as e:
             return None
 
-        return self.change_availability(sheet_title, date, str(new_value))
+        return self.change_availability(sheet_title, date, new_value)
 
     def add_sheet(self, title):
         """
@@ -243,22 +256,20 @@ class SpreadsheetAPI:
         Convert time into 2 string variables, looking for cell in sheet using this variables
         Return int indexes of row and column of cell in sheet
         """
-        values = self._read_data(sheet_title + '!A1:ZZZ1000')
-        data_values = [i[0] for i in values]
-        time_values = values[0]
 
         spreadsheet_date = datetime.fromtimestamp(date).strftime('%A, %B %-d, %Y')
         spreadsheet_time = datetime.fromtimestamp(date).strftime('%-I:%M %p')
 
-        time_index, date_index = 1, 1
-        for index, time in enumerate(time_values):
+        time_index, date_index = 0, 0
+        for index, time in enumerate(self.time_values, 1):
+
             if time == spreadsheet_time:
-                time_index += index
+                time_index = index
                 break
 
-        for index, date in enumerate(data_values):
+        for index, date in enumerate(self.date_values, 1):
             if date == spreadsheet_date:
-                date_index += index
+                date_index = index
                 break
 
         return time_index, date_index
@@ -283,8 +294,12 @@ class SpreadsheetAPI:
         letter = ''
         while row_id > 0:
             temp = (row_id - 1) % 26
+
             letter = chr(temp + 65) + letter
             row_id = (row_id - temp - 1) // 26
+
+        if not letter:
+            return None
 
         return sheet_title + '!' + letter + str(column_id)
 
@@ -328,3 +343,59 @@ class SpreadsheetAPI:
             body=value_body).execute()
         rows = result.get('values')
         return rows
+
+    def change_availability_multiple_ranges(self, sheet_title, data_list):
+        """
+        Parameters
+        ----------
+        sheet_title : str
+          Title of sheet
+        data_list: list
+            List contains tuples with date and value for cell
+            Example: [[1607414400, 1], [1607416200, 2]]
+        ----------
+
+        Create range names for each time from data_list,
+        make request for writing all values to a spreadsheet by their range names
+        """
+        spreadsheet_request_values = []
+        for data_item in data_list:
+            date = data_item[0]
+            value = data_item[1]
+
+            time_index, date_index = self._get_cell_indexes_by_timestamp(sheet_title, date)
+            range_name = self._create_range_name(sheet_title, time_index, date_index)
+            if range_name is None:
+                continue
+
+            spreadsheet_request_values.append(
+                {
+                    "range": range_name,
+                    "values": [[value]]
+                }
+            )
+
+        self._batch_update_data(spreadsheet_request_values)
+
+        return True
+
+    def _batch_update_data(self, request_values):
+        """
+        Parameters
+        ----------
+
+        request_values : list of dict
+            list of dictionaries, which contain range name and value
+        ----------
+
+        Send request batchUpdate to google spreadsheet API for updating batch of data
+        """
+        body = {
+            'valueInputOption': 'RAW',
+            'data': request_values
+        }
+        result = self.spreadsheet_service.values().batchUpdate(
+            spreadsheetId=self.spreadsheet_id, body=body).execute()
+        rows = result.get('values')
+        return rows
+
