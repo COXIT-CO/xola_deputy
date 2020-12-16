@@ -1,5 +1,6 @@
 import pickle
 import os.path
+import configparser
 
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -56,7 +57,7 @@ class SpreadsheetAPI:
         Update value in cell of spreadsheet using range name
     """
 
-    def __init__(self, spreadsheet_id):
+    def __init__(self):
         """
         Parameters
         ----------
@@ -71,6 +72,8 @@ class SpreadsheetAPI:
 
         """
         creds = None
+        config = configparser.ConfigParser()
+        config.read('Settings.ini')
         # The file token.pickle stores the user's access and refresh tokens, and is
         # created automatically when the authorization flow completes for the first
         # time.
@@ -91,7 +94,7 @@ class SpreadsheetAPI:
 
         # self.service = build('sheets', 'v4', credentials=creds)
         self.spreadsheet_service = build('sheets', 'v4', credentials=creds).spreadsheets()
-        self.spreadsheet_id = spreadsheet_id
+        self.spreadsheet_id = config['GOOGLE']['spreadsheet_id']
 
     @property
     def sheets(self):
@@ -120,8 +123,12 @@ class SpreadsheetAPI:
         """
         time_index, date_index = self._get_cell_indexes_by_timestamp(sheet_title, date)
         range_name = self._create_range_name(sheet_title, time_index, date_index)
+        result = self._read_data(range_name)
+        if result is None:
+            return 0
+        else:
+            return self._read_data(range_name)[0][0]
 
-        return self._read_data(range_name)[0][0]
 
     def change_availability(self, sheet_title, date, value):
         """
@@ -243,15 +250,15 @@ class SpreadsheetAPI:
         spreadsheet_date = datetime.fromtimestamp(date).strftime('%A, %B %-d, %Y')
         spreadsheet_time = datetime.fromtimestamp(date).strftime('%-I:%M %p')
 
-        time_index, date_index = 0, 0
+        time_index, date_index = 1, 1
         for index, time in enumerate(time_values):
             if time == spreadsheet_time:
-                time_index = index
+                time_index += index
                 break
 
         for index, date in enumerate(data_values):
             if date == spreadsheet_date:
-                date_index = index
+                date_index += index
                 break
 
         return time_index, date_index
@@ -277,7 +284,7 @@ class SpreadsheetAPI:
         while row_id > 0:
             temp = (row_id - 1) % 26
             letter = chr(temp + 65) + letter
-            row_id = (row_id - temp - 1) / 26
+            row_id = (row_id - temp - 1) // 26
 
         return sheet_title + '!' + letter + str(column_id)
 

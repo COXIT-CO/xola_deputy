@@ -15,6 +15,7 @@ def create_parser():
     parser.add_argument('-dat', '--deputy_access_token')
     parser.add_argument('-did', '--deputy_id')
     parser.add_argument('-url', '--url')
+    parser.add_argument('-sid', '--spreadsheet_id')
     parser.add_argument('-logmode', '--logmode', default='file')
     parser.add_argument('-logpath', '--logpath', default='./logs')
 
@@ -45,6 +46,9 @@ def initialize_variables():
 
     config.add_section('URL')
     config['URL']['public_url'] = namespace.url
+
+    config.add_section('GOOGLE')
+    config['GOOGLE']['spreadsheet_id'] = namespace.spreadsheet_id
 
     with open('xola_deputy/Settings.ini', 'w') as configfile:  # save
         config.write(configfile)

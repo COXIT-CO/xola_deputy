@@ -201,7 +201,8 @@ class XolaClient():
         :return: unix time stamp
         """
         timestamp = datetime.fromisoformat(time).timestamp()
-        return int(timestamp)
+        str_date = datetime.fromisoformat(time).strftime("%Y-%m-%d")
+        return int(timestamp), str_date
 
     @staticmethod
     def take_xola_settings(email, password):

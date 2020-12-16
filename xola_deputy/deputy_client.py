@@ -5,8 +5,6 @@ from collections import Counter
 
 import requests
 from logger import LoggerClient
-logger = LoggerClient().get_logger()
-
 
 class DeputyClient():
     """"Connect to Deputy API"""
@@ -46,21 +44,24 @@ class DeputyClient():
                 "Unable to send post request to DEPUTY",
                 exc_info=ex)
 
-    def get_people_unavailability(self, data):
+    def get_people_unavailability(self, date):
         """MAke post request , take all shifts,and search which people have a work
         :param data: in which data we looking for shift
         :return: list of unavailable employee
         """
-        url = self.__url + 'supervise/roster/' + data
+        #TODO location cpecific + id
+        url = self.__url + 'supervise/roster/' + date
         unavailable_employee = []
+        unavailable_time = []
         try:
 
             response = requests.get(url=url, headers=self.__headers,)
             for shift in response.json():
+                unavailable_time.append([shift["StartTime"], shift["EndTime"]])
                 if shift["_DPMetaData"]["EmployeeInfo"]:
                     unavailable_employee.append(
                         str(shift["_DPMetaData"]["EmployeeInfo"]["Id"]))
-            return unavailable_employee
+            return unavailable_employee, unavailable_time
 
         except requests.RequestException as ex:
             self.log.error(
@@ -164,6 +165,16 @@ class DeputyClient():
             if self.post_params_for_webhook(data[0],data[1]) != 200:
                 return False
         return True
+
+    def get_number_of_employee(self,):
+        """make GET request to DEPUTY,for all employee
+        :return: count of employee
+        """
+        #TODO: location specific
+        url = self.__url + 'supervise/employee'
+        response = requests.get(url=url, headers=self.__headers, )
+        return len(response.json())
+
 
     @staticmethod
     def update_params_for_post_deputy_style(params):

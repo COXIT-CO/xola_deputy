@@ -8,31 +8,31 @@ from logger import LoggerClient
 from spreadsheet_api import SpreadsheetAPI
 
 app = Flask(__name__)
-logger = LoggerClient().get_logger()
-xola = XolaClient(logger)
-deputy = DeputyClient(logger)
-sheets = SpreadsheetAPI("15CK9uoirlxXaVVbbsTWtW8JbjglusqArqvtaMDdn_YM")
+logging = LoggerClient().get_logger()
+xola = XolaClient(logging)
+deputy = DeputyClient(logging)
+sheets = SpreadsheetAPI()
 
 
 @app.route("/xola", methods=['POST'])
-def xola_webhook():
+def xola_deputy_run():
     """Take response from xola notification about order.
         Create parameters for deputy POST request with data from XOLA.
         Post new shift with this parameters , and check which employee free.
         :return: code 200 is all good, code 500 - arose problem
     """
     params, number_shifts, title = xola.start(request.json)
+    #TODO title is different in xola and sheets id location
     if params is False:
         return Response(status=500)
     for _ in range(number_shifts):
         # first time we created shift in open block
-        id_shift, date_shift,  = deputy.post_new_shift(params)
+        id_shift, date_shift = deputy.post_new_shift(params)
 
-        date_shift_unix = xola.convert_time(date_shift)
-        date_shift = datetime.fromisoformat(date_shift).strftime("%Y-%m-%d")
+        date_shift_unix, date_shift = xola.convert_time(date_shift)
 
         unavailable_employee = deputy.get_people_unavailability(
-            date_shift)  # check who have a work
+            date_shift)[0]  # check who have a work
         id_employee = deputy.get_people_availability(
             id_shift, unavailable_employee)
         if id_employee is False:
@@ -50,7 +50,7 @@ def xola_webhook():
             return Response(status=500)
         sheets.change_availability_by_value(title, date_shift_unix, -1)
 
-    logger.info("Successfully post shift, guides, employee ")
+    logging.info("Successfully post shift, guides, employee ")
 
     return Response(status=200)
 
@@ -74,7 +74,8 @@ def deputy_unvial():
     return Response(status=200)
 
 if __name__ == '__main__':
+    #move to setup
     if xola.subscribe_to_webhook() is False:
-        logger.warning("Can not subscribe to webhook")
+        logging.warning("Can not subscribe to webhook")
     deputy.subscribe_to_webhooks()
     app.run(host="0.0.0.0", port=5000)
