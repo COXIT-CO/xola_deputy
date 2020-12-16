@@ -47,7 +47,7 @@ def calculation_unavailability_count(time_of_shits, list_of_free_employee):
     return list_of_free_employee
 
 
-def change_sheets(count_of_days):
+def change_sheets(count_of_days, id_location):
     """
     take shifts from deputy, and minus unavailable employee from cell in google sheets
     :param count_of_days: how many days we process
@@ -64,7 +64,7 @@ def change_sheets(count_of_days):
         while date_start <= date_end:
             list_of_free_employee.append([date_start, number_of_employee])
             date_start = date_start + DELAY
-        time_of_shits = deputy.get_people_unavailability(date_shift)[1]
+        time_of_shits = deputy.get_people_unavailability(date_shift, id_location )[1]
 
         calculation_unavailability_count(time_of_shits, list_of_free_employee)
 

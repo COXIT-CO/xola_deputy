@@ -5,7 +5,10 @@ from datetime import datetime
 from math import ceil
 import json
 import requests
+import csv
 
+FILE_NAME_MAPPING = "mapping.csv"
+DELIMITER = ","
 
 class XolaClient():
     """connect to XOLA API"""
@@ -74,26 +77,27 @@ class XolaClient():
         time_start = self.convert_time(response.json()["start"])
         time_end = self.convert_time(response.json()["end"])
         experience_id = response.json()["experience"]["id"]
-        title = response.json()["title"]
+
         # all ticket for 1 event
         ticket_count = response.json()["quantity"]["reserved"]
         self._seller_id = response.json()["seller"]["id"]
 
-        area = self.compare_experience_and_area(experience_id)
-        if area is False:
+        mapping = self.compare_experience_and_area(experience_id)
+
+        if mapping is False:
             self.log.error("Can not find experience in json file")
             raise ValueError
-        shift_count = area["shift_count"]
+        shift_count = int(mapping["Shifts logic"])
 
         params = {
             "intStartTimestamp": time_start,
             "intEndTimestamp": time_end,
-            "intOpunitId": area["area_id"],
+            "intOpunitId": int(mapping["Area"])+2,
         }
 
         number_shifts = self.calculation_of_employee(shift_count, ticket_count)
 
-        return params, number_shifts, title
+        return params, number_shifts, mapping
 
     def start(self, request):
         """starting"""
@@ -186,11 +190,11 @@ class XolaClient():
         :param experience_id: id experience from xola
         :return: area id and ticket divine to deputy
         """
-        with open("data_file.json", "r") as write_file:
-            dani = json.load(write_file)
-        for exp in dani:
-            if exp["experience_id"] == experience_id:
-                return exp["area"]
+        with open(FILE_NAME_MAPPING) as r_file:
+            file_reader = csv.DictReader(r_file, delimiter = DELIMITER)
+            for exp_dict in file_reader:
+                if exp_dict["experience_id"] == experience_id:
+                    return exp_dict
         return False
 
     @staticmethod

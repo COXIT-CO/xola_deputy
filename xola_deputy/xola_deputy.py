@@ -21,8 +21,7 @@ def xola_deputy_run():
         Post new shift with this parameters , and check which employee free.
         :return: code 200 is all good, code 500 - arose problem
     """
-    params, number_shifts, title = xola.start(request.json)
-    #TODO title is different in xola and sheets id location
+    params, number_shifts, mapping = xola.start(request.json)
     if params is False:
         return Response(status=500)
     for _ in range(number_shifts):
@@ -30,9 +29,10 @@ def xola_deputy_run():
         id_shift, date_shift = deputy.post_new_shift(params)
 
         date_shift_unix, date_shift = xola.convert_time(date_shift)
-
+        id_location = int(mapping["Area"])
+        title = mapping['Possible Area Nicknames in Production']
         unavailable_employee = deputy.get_people_unavailability(
-            date_shift)[0]  # check who have a work
+            date_shift, id_location)[0]  # check who have a work
         id_employee = deputy.get_people_availability(
             id_shift, unavailable_employee)
         if id_employee is False:

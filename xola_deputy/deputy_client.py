@@ -44,7 +44,7 @@ class DeputyClient():
                 "Unable to send post request to DEPUTY",
                 exc_info=ex)
 
-    def get_people_unavailability(self, date):
+    def get_people_unavailability(self, date, id_location):
         """MAke post request , take all shifts,and search which people have a work
         :param data: in which data we looking for shift
         :return: list of unavailable employee
