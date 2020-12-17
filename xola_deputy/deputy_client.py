@@ -5,6 +5,8 @@ from collections import Counter
 
 import requests
 
+from setup import CONFIG_FILE_NAME
+
 
 class DeputyClient():
     """"Connect to Deputy API"""
@@ -13,7 +15,7 @@ class DeputyClient():
 
     def __init__(self, logger):
         config = configparser.ConfigParser()
-        config.read('Settings.ini')
+        config.read(CONFIG_FILE_NAME)
         deputy_access_token, deputy_id = config["DEPUTY"]["deputy_access_token"],\
             config["DEPUTY"]["deputy_id"]
         self.__headers = {
@@ -43,24 +45,12 @@ class DeputyClient():
                 "Unable to send post request to DEPUTY",
                 exc_info=ex)
 
-    @staticmethod
-    def check_all_job_employee(unavailable_employee):
-        """
-        create dictionary where take e less worked employee
-        :param unavailable_employee:
-        :return: employee who have a less work
-        """
-        job_employees = Counter()
-        for job in unavailable_employee:
-            job_employees[job] += 1
-        return (job_employees.most_common()[-1])[0]
-
-    def get_people_unavailability(self, data):
+    def get_people_unavailability(self, data, id_location):
         """MAke post request , take all shifts,and search which people have a work
         :param data: in which data we looking for shift
         :return: list of unavailable employee
         """
-        url = self.__url + 'supervise/roster/' + data
+        url = self.__url + 'supervise/roster/' + data + "/" + id_location
         unavailable_employee = []
         try:
 
@@ -104,3 +94,30 @@ class DeputyClient():
             self.log.error(
                 "Unable to send post request to DEPUTY",
                 exc_info=ex)
+
+    def get_employee_name(self, id_employee):
+        """
+        make get request to deputy,take employee name
+        :param employee_id:
+        :return: name of employee
+        """
+        url = self.__url + 'supervise/employee/' + id_employee
+        try:
+            response = requests.get(url=url, headers=self.__headers, )
+            return response.json()["DisplayName"]
+        except requests.RequestException as ex:
+            self.log.error(
+                "Unable to send post request to DEPUTY",
+                exc_info=ex)
+
+    @staticmethod
+    def check_all_job_employee(unavailable_employee):
+        """
+        create dictionary where take e less worked employee
+        :param unavailable_employee:
+        :return: employee who have a less work
+        """
+        job_employees = Counter()
+        for job in unavailable_employee:
+            job_employees[job] += 1
+        return (job_employees.most_common()[-1])[0]

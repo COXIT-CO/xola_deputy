@@ -38,9 +38,9 @@ LOG_CONFIG = dict(
                 'class': 'logging.handlers.TimedRotatingFileHandler',
                 'formatter': 'detailed',
                 'level': logging.INFO,
-                'filename': LOG_DIR+'logfile',
+                'filename': LOG_DIR + 'logfile',
                 'when': 'midnight',
-            },
+        },
     },
     root={
         'handlers': ['file', ],
