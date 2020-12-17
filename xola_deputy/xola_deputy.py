@@ -1,16 +1,19 @@
 """Main script which start all logic. Here we have 2 webhooks,
 and process date from request from XOLA and DEPUTY"""
-from datetime import datetime
+import threading
+import time
+
 from flask import Flask, request, Response
 from xola_client import XolaClient
 from deputy_client import DeputyClient
 from logger import LoggerClient
-from auto_change_sheets import change_cell,
+from google_sheets_client import GoogleSheetsClient
 
 app = Flask(__name__)
 logging = LoggerClient().get_logger()
 xola = XolaClient(logging)
 deputy = DeputyClient(logging)
+sheets = GoogleSheetsClient(deputy, logging)
 
 
 @app.route("/xola", methods=['POST'])
@@ -25,57 +28,101 @@ def xola_deputy_run():
         return Response(status=500)
     for _ in range(number_shifts):
         # first time we created shift in open block
+
+        # testing lines start
+        params.update({
+            "intStartTimestamp": 1608206400,
+            "intEndTimestamp": 1608213600
+        })
+        # testing lines end
+
         id_shift, date_shift = deputy.post_new_shift(params)
 
-        date_shift_unix, date_shift = xola.convert_time(date_shift)
-        id_location = int(mapping["Area"])
+        date_shift = xola.convert_time(date_shift)
+
+        id_location = mapping["Area"]
         title = mapping['Possible Area Nicknames in Production']
+
         unavailable_employee = deputy.get_people_unavailability(
             date_shift, id_location)[0]  # check who have a work
+        if unavailable_employee is False:
+            return Response(status=500)
+
         id_employee = deputy.get_people_availability(
             id_shift, unavailable_employee)
-        if id_employee is False:
-            return Response(status=500)# think if we sometime have this situation
+
         params.update({
             "intRosterId": id_shift,
             "intRosterEmployee": id_employee
         })
-        deputy.post_new_shift(params)  # post shift for employee
-        #sheets.change_availability_by_value(title, date_shift_unix, -1)
-        change_cell(params["intStartTimestamp"], params["intEndTimestamp"], title)
+        is_good = deputy.post_new_shift(params)  # post shift for employee
+        if is_good is False:
+            return Response(status=500)
+        sheets.change_cells(
+            params["intStartTimestamp"],
+            params["intEndTimestamp"],
+            title)
+        logging.info("Successfully post shift, sheets ")
         name_of_employee = deputy.get_employee_name(id_employee)
         if name_of_employee is False:
             return Response(status=500)
         if xola.post_guides_for_event(name_of_employee) is False:
             return Response(status=500)
 
-    logging.info("Successfully post shift, guides, employee ")
+    logging.info("Successfully post guides")
 
     return Response(status=200)
+
 
 @app.route("/delete_employee", methods=['POST'])
 def deputy_delet():
-    #sheets.change_availability_by_value("Aliens",1607601600,-1)
-    #change_sheets(30,)
+    """we change all list in google sheet,when in deputy delete employee"""
+    sheets.change_all_spread()
     return Response(status=200)
+
 
 @app.route("/insert_employee", methods=['POST'])
 def deputy_insert():
-    # TODO:post plus number in google shift
-    print(request.json)
+    """we change all list in google sheet,when in deputy insert employee"""
+    sheets.change_all_spread()
     return Response(status=200)
+
 
 @app.route("/unvial_employee", methods=['POST'])
 def deputy_unvial():
-    list_of_unvial = deputy.get_employee_unavail()#list of (timestar,timeend) unix
+    """get all day off from deputy,change specific list,and make minus 1 to cells"""
+    list_of_unvial = deputy.get_employee_unavail()
     if list_of_unvial is False:
         return Response(status=500)
-    #sheets.change_availability_by_value("Aliens",1607601600,-1)
+
+    for unvial_time in list_of_unvial:
+        sheets.change_specific_spread(unvial_time[2])
+        sheets.change_cells(unvial_time[0], unvial_time[1], unvial_time[2])
+
     return Response(status=200)
 
+
+def treade_notification_deamon(sec=0, minutes=0, hours=0):
+    """This func refresh another func , which change cells in sheets"""
+    while True:
+        sleep_time = sec + (minutes * 60) + (hours * 3600)
+        time.sleep(sleep_time)
+        sheets.change_all_spread()
+        print("Refresh enable notification")
+
+
+def create_tread():
+    """Create deamon thred for rewrite cells in sheets"""
+    enable_notification_thread = threading.Thread(
+        target=treade_notification_deamon, kwargs=({"hours": 23}))
+    enable_notification_thread.daemon = True
+    enable_notification_thread.start()
+
+
 if __name__ == '__main__':
-    #move to setup
     if xola.subscribe_to_webhook() is False:
         logging.warning("Can not subscribe to webhook")
     #deputy.subscribe_to_webhooks()
+    #sheets.change_all_spread()
+    #create_tread()
     app.run(host="0.0.0.0", port=5000)

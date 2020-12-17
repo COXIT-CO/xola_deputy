@@ -1,6 +1,5 @@
 import pickle
 import os.path
-import configparser
 
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -57,7 +56,7 @@ class SpreadsheetAPI:
         Update value in cell of spreadsheet using range name
     """
 
-    def __init__(self):
+    def __init__(self,spreadsheet_id):
         """
         Parameters
         ----------
@@ -72,8 +71,7 @@ class SpreadsheetAPI:
 
         """
         creds = None
-        config = configparser.ConfigParser()
-        config.read('Settings.ini')
+
         # The file token.pickle stores the user's access and refresh tokens, and is
         # created automatically when the authorization flow completes for the first
         # time.
@@ -94,7 +92,7 @@ class SpreadsheetAPI:
 
         # self.service = build('sheets', 'v4', credentials=creds)
         self.spreadsheet_service = build('sheets', 'v4', credentials=creds).spreadsheets()
-        self.spreadsheet_id = config['GOOGLE']['spreadsheet_id']
+        self.spreadsheet_id = spreadsheet_id
 
         values = self._read_data(self.spreadsheet_service.get(
             spreadsheetId=self.spreadsheet_id

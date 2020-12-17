@@ -4,7 +4,10 @@ import configparser
 from collections import Counter
 
 import requests
-from logger import LoggerClient
+from global_config import compare_mapping, CONFIG_FILE_NAME
+
+HTTP_SUCCESS = 200
+
 
 class DeputyClient():
     """"Connect to Deputy API"""
@@ -13,7 +16,7 @@ class DeputyClient():
 
     def __init__(self, logger):
         config = configparser.ConfigParser()
-        config.read('Settings.ini')
+        config.read(CONFIG_FILE_NAME)
         deputy_access_token, deputy_id = config["DEPUTY"]["deputy_access_token"],\
             config["DEPUTY"]["deputy_id"]
         self.__headers = {
@@ -28,8 +31,7 @@ class DeputyClient():
         :param params_for_deputy: data to post request
         :return: str. id shift, and correct date
         """
-        json_mylist = json.dumps(params_for_deputy)
-        data = f"{json_mylist}"
+        data = self.update_params_for_post_deputy_style(params_for_deputy)
         url = self.__url + 'supervise/roster/'
         try:
             response = requests.post(
@@ -37,8 +39,8 @@ class DeputyClient():
             return str(response.json()["Id"]), response.json()["Date"]
         except KeyError as ex:
             self.log.warning(
-                "Bad parameters for post request",
-                exc_info=ex)
+                "Can not find availability employee",)
+            return False, False
         except requests.RequestException as ex:
             self.log.error(
                 "Unable to send post request to DEPUTY",
@@ -49,8 +51,7 @@ class DeputyClient():
         :param data: in which data we looking for shift
         :return: list of unavailable employee
         """
-        #TODO location cpecific + id
-        url = self.__url + 'supervise/roster/' + date
+        url = self.__url + 'supervise/roster/' + date + "/" + id_location
         unavailable_employee = []
         unavailable_time = []
         try:
@@ -69,6 +70,7 @@ class DeputyClient():
                 exc_info=ex)
         except (ValueError, TypeError):
             self.log.error("Bad JSON data")
+            return False
 
     def get_people_availability(self, shift_id, unavi_employee):
         """Take id employee,which can work in taken shift
@@ -80,7 +82,6 @@ class DeputyClient():
             response = requests.get(url=url, headers=self.__headers,)
 
             free_employee = list(response.json()["trained"])
-
             if not unavi_employee:  # check if we have all employee free
                 return free_employee[0]
 
@@ -127,15 +128,20 @@ class DeputyClient():
             if not response.json():
                 return False
             list_of_em = []
+
             for employee in response.json():
-                list_of_em.append((employee["StartTime"], employee["EndTime"]))
+                employee_id = employee["Employee"]
+                title = self._get_area_for_employee(employee_id)
+                list_of_em.append(
+                    (employee["StartTime"], employee["EndTime"], title))
+
             return list_of_em
         except requests.RequestException as ex:
             self.log.error(
                 "Unable to send post request to DEPUTY",
                 exc_info=ex)
 
-    def post_params_for_webhook(self,topic,address):
+    def post_params_for_webhook(self, topic, address):
         """
         make post request to deputy for webhook
         :param topic: what we waiting
@@ -150,7 +156,7 @@ class DeputyClient():
         }
         url = self.__url + 'resource/Webhook'
         data = self.update_params_for_post_deputy_style(params_for_webhooks)
-        response  = requests.post(url=url, headers=self.__headers, data=data)
+        response = requests.post(url=url, headers=self.__headers, data=data)
         return response.status_code
 
     def subscribe_to_webhooks(self):
@@ -158,23 +164,55 @@ class DeputyClient():
         make 3 post request for subscribe webhooks
         :return: true if all good
         """
-        data_for_webhooks = [("Employee.Delete","/delete_employee"),
-                             ("Employee.Insert","/insert_employee"),
-                             ("EmployeeAvailability.Insert","/unvial_employee")]
+        data_for_webhooks = [
+            ("Employee.Delete",
+             "/delete_employee"),
+            ("Employee.Insert",
+             "/insert_employee"),
+            ("EmployeeAvailability.Insert",
+             "/unvial_employee")]
+        if self._verification_webhooks(data_for_webhooks) is False:
+            self.log.warning("You already subscribe to webhooks")
+            return False
         for data in data_for_webhooks:
-            if self.post_params_for_webhook(data[0],data[1]) != 200:
+            if self.post_params_for_webhook(data[0], data[1]) != HTTP_SUCCESS:
                 return False
         return True
 
-    def get_number_of_employee(self,):
+    def _verification_webhooks(self,data_for_webhooks):
+        """
+        make verification , if user already subscribe to webhooks
+        :param data_for_webhooks: list of tuple with topic webhook
+        :return: bool, false already subscribe , true make post request
+        """
+        url = self.__url + 'resource/Webhook'
+        response = requests.get(url=url, headers=self.__headers, )
+        for webhook in response.json():
+            for data in data_for_webhooks:
+                if webhook["Topic"] == data[0]:
+                    return False
+        return True
+
+
+
+    def get_number_of_employee(self, id_location):
         """make GET request to DEPUTY,for all employee
         :return: count of employee
         """
-        #TODO: location specific
         url = self.__url + 'supervise/employee'
         response = requests.get(url=url, headers=self.__headers, )
-        return len(response.json())
+        count = 0
+        for employee in response.json():
+            if employee["Company"] == int(id_location):
+                count += 1
+        return count
 
+    def _get_area_for_employee(self, employee_id):
+        url = self.__url + 'supervise/employee/' + employee_id
+        response = requests.get(url=url, headers=self.__headers, )
+        area_id = response.json()["Company"]
+        return compare_mapping(area_id, "area")[
+            "Possible Area Nicknames in Production"]
 
     @staticmethod
     def update_params_for_post_deputy_style(params):

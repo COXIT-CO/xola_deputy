@@ -1,8 +1,13 @@
 """Configuration module for logging"""
 import logging
 from os import mkdir
+import csv
 
 LOG_DIR = "./logs/"
+FILE_NAME_MAPPING = "mapping.csv"
+DELIMITER = ","
+CONFIG_FILE_NAME = 'Settings.ini'
+
 
 try:
     mkdir(LOG_DIR)
@@ -47,3 +52,24 @@ LOG_CONFIG = dict(
         'level': logging.INFO,
     },
 )
+
+
+def compare_mapping(compare_value, key):
+    """
+    :param compare_value: value we want to cmpare in mapping csv
+    :return: mapping dict in all data
+    """
+    key_value = {
+        'title': "Possible Area Nicknames in Production",
+        'experience': "experience_id",
+        'area': "Area"
+    }
+    heading = key_value.get(key, False)
+    if heading is False:
+        return False
+    with open(FILE_NAME_MAPPING) as r_file:
+        file_reader = csv.DictReader(r_file, delimiter=DELIMITER)
+        for exp_dict in file_reader:
+            if exp_dict[heading] == compare_value:
+                return exp_dict
+    return False

@@ -1,7 +1,7 @@
 # xola_deputy
 Xola, Deputy, and Google Sheets API Integration
 
-#Requirments
+# Requirments
 Python 3.9
 
 Run `pip install -r requirements.txt` to install all required libraries.
@@ -12,26 +12,27 @@ Xola account ( seller )
 
 Public url ( You can use ngrok )
 
-data_file.json ( see in step by step )
+mapping.csv ( see in step by step )
 
 credentials.json (google account, see in step by step )
 
 token.pickle  (google account, see in step by step )
 
-#Deputy API set up
+
+# Deputy API set up
 Users have to generate `deputy_access_token` in deputy web site.
 For more detailed instruction read Deputy API Documentation: https://www.deputy.com/api-doc/API/Authentication
 
-#XOLA API set up
-Users just need sing up in xola.com. This programe need e-mail and password
+# XOLA API set up
+Users just need sing up in xola.com. This programme need api-key and user id
 
-#First start
+# First start
 When you clone this repo and want to start programme:
 First of all u have to run 'setup.py' file with parameters:
 
-`-ex`: email of XOLA user
+`-xak`: XOLA api-key ( token )
 
-`-px`: password of XOLA user
+`-ui`: XOLA user id 
 
 `-dat`: deputy access token,which generated on deputy.com
 
@@ -44,10 +45,10 @@ First of all u have to run 'setup.py' file with parameters:
 
 After ending, in `xola_deputy` folder created `Settings.ini` file with all your data. So next time u have not to input all of them
 
-#Run The Script
+# Run The Script
 Just run `xola_deputy.py` file.
 
-#Step by step
+# Step by step
 First of all , you have to create a seller XOLA account.
 
 Also have to create deputy account.Then:
@@ -67,22 +68,28 @@ You have to have a public IP. You can using web services like ngrok.
 Run `pip install -r requirements.txt`
 First, start `setup,py` with parameters. E.g 
 
-`python setup.py -ex email_of_xola_user@email.com -px user_password -dat efnjwe23jfnj3d32dn3oir -did 1234567678.eu.deputy.com -url http://60243e0591b0.ngrok.io -logmode console `
+`python setup.py -xak 57YSB333_U29-333fAsp2xw04_LZkzfemv5o-rCgYO0 -ui 5fbe33dc5333ed24da1e3333 -dat efnjwe23jfnj3d32dn3oir -did 1234567678.eu.deputy.com -url http://60243e0591b0.ngrok.io -logmode console `
 
-You have to have json file `data_file.json` in directory `xola_deputy/`. This file have a structure:
+You have to have .csv file `mapping.csv` in directory `xola_deputy/`. This file have a headlines:
 
-`[{"experience_id": "5b58a24fc481e1a2168b456a", "area": {"area_id": 1, "shift_count": 1}},]`
+`experience_id,experience_name,Area,Possible Area Nicknames in Production,Shifts logic`
 
- This is a list of dictionary. Where key 
- 
- `experience_id` - id of experience in XOLA ;
-  
- `area` - dictionary with 2 keys: 
- 
-    `area_id` - id location in deputy, 
- 
-     `shift_count` - determine number of shifts 
+Where:
 
-TODO: google sheets instruction
+`experience_id` - id experience in xola
 
-That is all, now ypu can run xola_deputy.py
+`experience_name` - title of experience in xola
+
+`Area` - id location in deputy
+
+`Possible Area Nicknames in Production` - title of google sheets list
+
+`Shifts logic` - determine number of shifts 
+
+File for connect google sheets: `credentials.json`, `token.pickle`
+
+`credentials.json`: CLIENT CONFIGURATION, 
+
+`token.pickle`: stores the user's access and refresh tokens
+
+see google sheets documentation https://developers.google.com/sheets/api
