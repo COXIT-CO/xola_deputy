@@ -1,20 +1,17 @@
 """Main script which start all logic. Here we have 2 webhooks,
 and process date from request from XOLA and DEPUTY"""
-import threading
-import time
-
 from flask import Flask, request, Response
 from xola_client import XolaClient
 from deputy_client import DeputyClient
 from logger import LoggerClient
 from google_sheets_client import GoogleSheetsClient
+from global_config import create_tread
 
 app = Flask(__name__)
 logging = LoggerClient().get_logger()
 xola = XolaClient(logging)
 deputy = DeputyClient(logging)
 sheets = GoogleSheetsClient(deputy, logging)
-
 
 @app.route("/xola", methods=['POST'])
 def xola_deputy_run():
@@ -67,7 +64,7 @@ def xola_deputy_run():
 
 
 @app.route("/delete_employee", methods=['POST'])
-def deputy_delet():
+def deputy_delete():
     """we change all list in google sheet,when in deputy delete employee"""
     sheets.change_all_spread()
     return Response(status=200)
@@ -101,24 +98,10 @@ def deputy_unvial():
     return Response(status=200)
 
 
-def treade_notification_deamon(sec=0, minutes=0, hours=0):
-    """This func refresh another func , which change cells in sheets"""
-    while True:
-        sleep_time = sec + (minutes * 60) + (hours * 3600)
-        time.sleep(sleep_time)
-        sheets.change_all_spread()
-
-def create_tread():
-    """Create deamon thred for rewrite cells in sheets"""
-    enable_notification_thread = threading.Thread(
-        target=treade_notification_deamon, kwargs=({"hours": 23}))
-    enable_notification_thread.daemon = True
-    enable_notification_thread.start()
-
 if __name__ == '__main__':
     if xola.subscribe_to_webhook() is False:
         logging.warning("Can not subscribe to webhook")
     deputy.subscribe_to_webhooks()
     sheets.change_all_spread()
-    create_tread()
+    create_tread(sheets.change_all_spread)
     app.run(host="0.0.0.0", port=5000)
