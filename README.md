@@ -42,6 +42,8 @@ First of all u have to run 'setup.py' file with parameters:
 
 `-logmode`: mode of logging handling. To enable logging to console pass 'console'. By default it's 'file'
 
+`-spid` : id of google spreadsheet file
+
 
 After ending, in `xola_deputy` folder created `Settings.ini` file with all your data. So next time u have not to input all of them
 
@@ -68,7 +70,7 @@ You have to have a public IP. You can using web services like ngrok.
 Run `pip install -r requirements.txt`
 First, start `setup,py` with parameters. E.g 
 
-`python setup.py -xak 57YSB333_U29-333fAsp2xw04_LZkzfemv5o-rCgYO0 -ui 5fbe33dc5333ed24da1e3333 -dat efnjwe23jfnj3d32dn3oir -did 1234567678.eu.deputy.com -url http://60243e0591b0.ngrok.io -logmode console `
+`python setup.py -xak 57YSB333_U29-333fAsp2xw04_LZkzfemv5o-rCgYO0 -ui 5fbe33dc5333ed24da1e3333 -dat efnjwe23jfnj3d32dn3oir -did 1234567678.eu.deputy.com -url http://60243e0591b0.ngrok.io -logmode console -spid 33333uoirlxXaVVbbsTWtW8JbjglusqArqvtaMDdn_YM  `
 
 You have to have .csv file `mapping.csv` in directory `xola_deputy/`. This file have a headlines:
 
