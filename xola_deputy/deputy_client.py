@@ -130,8 +130,10 @@ class DeputyClient():
             list_of_em = []
 
             for employee in response.json():
-                employee_id = employee["Employee"]
+                employee_id = str(employee["Employee"])
                 title = self._get_area_for_employee(employee_id)
+                if title is False:
+                    return False
                 list_of_em.append(
                     (employee["StartTime"], employee["EndTime"], title))
 
@@ -193,8 +195,6 @@ class DeputyClient():
                     return False
         return True
 
-
-
     def get_number_of_employee(self, id_location):
         """make GET request to DEPUTY,for all employee
         :return: count of employee
@@ -210,9 +210,11 @@ class DeputyClient():
     def _get_area_for_employee(self, employee_id):
         url = self.__url + 'supervise/employee/' + employee_id
         response = requests.get(url=url, headers=self.__headers, )
-        area_id = response.json()["Company"]
-        return compare_mapping(area_id, "area")[
-            "Possible Area Nicknames in Production"]
+        area_id = str(response.json()["Company"])
+        title = compare_mapping(area_id, "area")
+        if title is False:
+            return False
+        return title["Possible Area Nicknames in Production"]
 
     @staticmethod
     def update_params_for_post_deputy_style(params):

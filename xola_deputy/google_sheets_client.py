@@ -63,9 +63,7 @@ class GoogleSheetsClient():
         :param end_time: unix time end changed
         :param title: title of list in google sheets
         """
-        while start_time <= end_time:
-            self.sheets_api.change_availability_by_value(title, start_time, -1)
-            start_time += DELAY
+        self.sheets_api.change_multiple_ranges_by_value(title,start_time,end_time,-1)
 
     def change_all_spread(self):
         """
@@ -73,17 +71,21 @@ class GoogleSheetsClient():
         """
         title_of_all_lists = self._get_all_title()
         for title in title_of_all_lists:
-            self.change_specific_spread(title)
+            if self.change_specific_spread(title) is False:
+                continue
 
     def change_specific_spread(self, title):
         """
         change value in cell in specific list
         :param title: name of list
         """
-        location_id = compare_mapping(title, "title")["Area"]
-        range_of_values = self.change_sheets(DAYS, location_id)
+        location_id = compare_mapping(title, "title")
+        if location_id is False:
+            return False
+        range_of_values = self.change_sheets(DAYS, location_id["Area"])
         self.sheets_api.change_availability_multiple_ranges(
             title, range_of_values)
+        return True
 
     def _get_all_title(self):
         """

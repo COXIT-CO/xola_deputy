@@ -1,17 +1,23 @@
+# pylint: disable=E1101
+"""
+This module describe class for working with Spreadsheet API
+"""
+
 import pickle
 import os.path
 
+from datetime import datetime
 from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
-from googleapiclient.errors import HttpError
-from datetime import datetime
 
 TOKEN_PATH = 'token.pickle'
 CREDENTIALS_PATH = 'credentials.json'
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+MINUTES_TIME = 60
 
 
 class SpreadsheetAPI:
@@ -31,7 +37,8 @@ class SpreadsheetAPI:
     Methods
     -------
     get_availability(sheet_title, date)
-        Get title of sheet in google spreadsheet and date (year, month, day, hour, minutes) in unix format
+        Get title of sheet in google spreadsheet and date (year, month, day, hour, minutes)
+        in unix format
         Return value from appropriate cell
 
     change_availability(self, sheet_title, date, value)
@@ -43,7 +50,7 @@ class SpreadsheetAPI:
     get_sheet_by_title(title)
         return sheet object
 
-    _get_cell_indexes_by_timestamp(sheet_title, date)
+    _get_cell_indexes_by_timestamp(date)
         convert date to str format and looking for index of cell in spreadsheet
 
     _create_range_name(sheet_title, row_id, column_id)
@@ -56,7 +63,7 @@ class SpreadsheetAPI:
         Update value in cell of spreadsheet using range name
     """
 
-    def __init__(self,spreadsheet_id):
+    def __init__(self, spreadsheet_id):
         """
         Parameters
         ----------
@@ -71,7 +78,6 @@ class SpreadsheetAPI:
 
         """
         creds = None
-
         # The file token.pickle stores the user's access and refresh tokens, and is
         # created automatically when the authorization flow completes for the first
         # time.
@@ -90,7 +96,6 @@ class SpreadsheetAPI:
             with open(TOKEN_PATH, 'wb') as token:
                 pickle.dump(creds, token)
 
-        # self.service = build('sheets', 'v4', credentials=creds)
         self.spreadsheet_service = build('sheets', 'v4', credentials=creds).spreadsheets()
         self.spreadsheet_id = spreadsheet_id
 
@@ -107,7 +112,9 @@ class SpreadsheetAPI:
         Property
         Return all sheet objects in spreadsheet
         """
-        return self.spreadsheet_service.get(spreadsheetId=self.spreadsheet_id).execute().get('sheets', '')
+        return self.spreadsheet_service.get(
+            spreadsheetId=self.spreadsheet_id
+        ).execute().get('sheets', '')
 
     def get_availability(self, sheet_title, date):
         """
@@ -126,7 +133,7 @@ class SpreadsheetAPI:
 
         Return value from cell if date is valid, in another case - return None
         """
-        time_index, date_index = self._get_cell_indexes_by_timestamp(sheet_title, date)
+        time_index, date_index = self._get_cell_indexes_by_timestamp(date)
         range_name = self._create_range_name(sheet_title, time_index, date_index)
 
         if range_name is None:
@@ -135,8 +142,8 @@ class SpreadsheetAPI:
         result = self._read_data(range_name)
         if result is None:
             return 0
-        else:
-            return result[0][0]
+
+        return result[0][0]
 
     def change_availability(self, sheet_title, date, value):
         """
@@ -155,7 +162,7 @@ class SpreadsheetAPI:
         Return value of cell if date is valid, in another case - return None
         """
 
-        time_index, date_index = self._get_cell_indexes_by_timestamp(sheet_title, date)
+        time_index, date_index = self._get_cell_indexes_by_timestamp(date)
         range_name = self._create_range_name(sheet_title, time_index, date_index)
 
         if range_name is None:
@@ -182,7 +189,7 @@ class SpreadsheetAPI:
         try:
             old_value = int(self.get_availability(sheet_title, date))
             new_value = old_value + value
-        except ValueError as e:
+        except ValueError:
             return None
 
         return self.change_availability(sheet_title, date, new_value)
@@ -217,7 +224,7 @@ class SpreadsheetAPI:
                 }).execute()
 
             return result
-        except HttpError as e:
+        except HttpError:
             return None
 
     def get_sheet_by_title(self, title):
@@ -241,12 +248,10 @@ class SpreadsheetAPI:
 
         return result
 
-    def _get_cell_indexes_by_timestamp(self, sheet_title, date):
+    def _get_cell_indexes_by_timestamp(self, date):
         """
         Parameters
         ----------
-        sheet_title : str
-          Title of sheet
         date: int
             Time in unix format
         ----------
@@ -260,13 +265,12 @@ class SpreadsheetAPI:
 
         time_index, date_index = 0, 0
         for index, time in enumerate(self.time_values, 1):
-
             if time == spreadsheet_time:
                 time_index = index
                 break
 
-        for index, date in enumerate(self.date_values, 1):
-            if date == spreadsheet_date:
+        for index, date_tmp in enumerate(self.date_values, 1):
+            if date_tmp == spreadsheet_date:
                 date_index = index
                 break
 
@@ -342,6 +346,51 @@ class SpreadsheetAPI:
         rows = result.get('values')
         return rows
 
+    def change_multiple_ranges_by_value(self, sheet_title, time_start, time_end, value):
+        """
+        Parameters
+        ----------
+        sheet_title : str
+            Title of sheet
+        time_start : int
+            Time of start changing in unix format
+        time_end : int
+            Time of end changing in unix format
+        value : str
+            All cells change by this value
+        ----------
+
+        Change all values in provided sheet from time_start to time_end
+        """
+        range_names = []
+        while time_start <= time_end:
+            time_index, date_index = self._get_cell_indexes_by_timestamp(time_start)
+            range_name_tmp = self._create_range_name(sheet_title, time_index, date_index)
+
+            if range_name_tmp:
+                range_names.append(range_name_tmp)
+            time_start += 30 * MINUTES_TIME
+
+        result = self.spreadsheet_service.values().batchGet(
+            spreadsheetId=self.spreadsheet_id, ranges=range_names).execute()
+        ranges = result.get('valueRanges', [])
+        spreadsheet_request_values = []
+
+        for tmp_range in ranges:
+            if 'values' in tmp_range:
+                tmp_range_value = int(tmp_range['values'][0][0])
+            else:
+                tmp_range_value = 0
+
+            spreadsheet_request_values.append(
+                {
+                    "range": tmp_range['range'],
+                    "values": [[tmp_range_value + value]]
+                }
+            )
+
+        self._batch_update_data(spreadsheet_request_values)
+
     def change_availability_multiple_ranges(self, sheet_title, data_list):
         """
         Parameters
@@ -361,7 +410,7 @@ class SpreadsheetAPI:
             date = data_item[0]
             value = data_item[1]
 
-            time_index, date_index = self._get_cell_indexes_by_timestamp(sheet_title, date)
+            time_index, date_index = self._get_cell_indexes_by_timestamp(date)
             range_name = self._create_range_name(sheet_title, time_index, date_index)
             if range_name is None:
                 continue
@@ -396,4 +445,3 @@ class SpreadsheetAPI:
             spreadsheetId=self.spreadsheet_id, body=body).execute()
         rows = result.get('values')
         return rows
-

@@ -28,14 +28,6 @@ def xola_deputy_run():
         return Response(status=500)
     for _ in range(number_shifts):
         # first time we created shift in open block
-
-        # testing lines start
-        params.update({
-            "intStartTimestamp": 1608206400,
-            "intEndTimestamp": 1608213600
-        })
-        # testing lines end
-
         id_shift, date_shift = deputy.post_new_shift(params)
 
         date_shift = xola.convert_time(date_shift)
@@ -92,11 +84,18 @@ def deputy_insert():
 def deputy_unvial():
     """get all day off from deputy,change specific list,and make minus 1 to cells"""
     list_of_unvial = deputy.get_employee_unavail()
+
     if list_of_unvial is False:
         return Response(status=500)
 
+    title_to_change = set()
     for unvial_time in list_of_unvial:
-        sheets.change_specific_spread(unvial_time[2])
+        title_to_change.add(unvial_time[2])
+
+    for title in title_to_change:
+        sheets.change_specific_spread(title)
+
+    for unvial_time in list_of_unvial:
         sheets.change_cells(unvial_time[0], unvial_time[1], unvial_time[2])
 
     return Response(status=200)
@@ -108,8 +107,6 @@ def treade_notification_deamon(sec=0, minutes=0, hours=0):
         sleep_time = sec + (minutes * 60) + (hours * 3600)
         time.sleep(sleep_time)
         sheets.change_all_spread()
-        print("Refresh enable notification")
-
 
 def create_tread():
     """Create deamon thred for rewrite cells in sheets"""
@@ -118,11 +115,10 @@ def create_tread():
     enable_notification_thread.daemon = True
     enable_notification_thread.start()
 
-
 if __name__ == '__main__':
     if xola.subscribe_to_webhook() is False:
         logging.warning("Can not subscribe to webhook")
-    #deputy.subscribe_to_webhooks()
-    #sheets.change_all_spread()
-    #create_tread()
+    deputy.subscribe_to_webhooks()
+    sheets.change_all_spread()
+    create_tread()
     app.run(host="0.0.0.0", port=5000)
