@@ -1,6 +1,6 @@
 """Configuration module for logging"""
 import logging
-from os import mkdir
+from os import mkdir,getcwd
 import csv
 import threading
 import time
@@ -8,8 +8,7 @@ import time
 LOG_DIR = "./logs/"
 FILE_NAME_MAPPING = "mapping.csv"
 DELIMITER = ","
-CONFIG_FILE_NAME = 'Settings.ini'
-
+CONFIG_FILE_NAME = getcwd()+'/Settings.ini'
 
 try:
     mkdir(LOG_DIR)
@@ -90,3 +89,4 @@ def create_tread(func):
         target=treade_notification_deamon, kwargs=({"func":func,"hours": 23}))
     enable_notification_thread.daemon = True
     enable_notification_thread.start()
+
