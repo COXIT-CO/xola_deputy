@@ -1,7 +1,12 @@
-from xola_deputy import deputy
 from datetime import datetime
 import requests
 import pytest
+
+from xola_deputy.deputy_client import DeputyClient
+from xola_deputy.logger import LoggerClient
+
+logging = LoggerClient().get_logger()
+deputy = DeputyClient(logging)
 
 @pytest.fixture()
 def get_id_shift():
@@ -21,9 +26,8 @@ def test_post_new_shift(get_id_shift):
 
 def test_get_people_unavailability():
     now = (datetime.now().strftime("%Y-%m-%d"))
-    unavailable_employee = deputy.get_people_unavailability(
-        now)
-    assert not unavailable_employee
+    unavailable_employee, unavailable_time = deputy.get_people_unavailability(now,"1")
+    assert unavailable_employee != False
 
 def test_get_people_availability(get_id_shift):
     id_shift = str(get_id_shift)

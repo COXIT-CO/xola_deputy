@@ -1,7 +1,11 @@
 import json
 import requests
-import pytest
-from xola_deputy import xola
+
+from xola_deputy.xola_client import XolaClient
+from xola_deputy.logger import LoggerClient
+
+logging = LoggerClient().get_logger()
+xola = XolaClient(logging)
 
 def test_take_params_from_responce():
 
@@ -11,8 +15,8 @@ def test_take_params_from_responce():
     assert xola.calculation_of_employee(20, 99) == 5
 
 def test_convert_time():
-    assert xola.convert_time("2020-12-07T12:55:40+00:00") == 1607345740
-    assert xola.convert_time("2020-12-01T10:14:40+00:00") == 1606817680
+    assert xola.convert_time("2020-12-07T12:55:40+00:00") == "2020-12-07"
+    assert xola.convert_time("2020-12-01T10:14:40+00:00") == "2020-12-01"
 
 def test_subscribe_to_webhook():
     bool_status = xola.subscribe_to_webhook("installation.delete")
@@ -36,7 +40,7 @@ def test_subscribe_to_webhook():
 
 def test_get_data_from_event():
     xola._event_id = "5fc69bb3572e05b862364adf"
-    response = xola.get_data_from_event()
+    response = xola._get_data_from_event()
     assert response.status_code == 200
 
 def test_start():
@@ -53,12 +57,6 @@ def test_take_guide_id():
     name = "Vi VI"
     test_id = xola.take_guide_id(name)
     assert test_id == False
-
-def test_compare_experience_and_area():
-    exp_id = "5b58a24fc4341e1a2168b456a"
-    assert xola.compare_experience_and_area(exp_id) == False
-    exp_id = "5b58a277c381e1a3328b4572"
-    assert xola.compare_experience_and_area(exp_id) != False
 
 def test_post_guides_for_event():
     assert xola.post_guides_for_event("Gavin Lovett") == False
