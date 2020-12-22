@@ -1,0 +1,987 @@
+{
+    "data": [
+        {
+            "id": "5b5f8e90c481e1e54e8b4571",
+            "object": "user_profile",
+            "bio": null,
+            "name": "Maaiz - GM Test",
+            "phone": null,
+            "user": {
+                "id": "5b5f8deec381e10a708b457c"
+            },
+            "seller": {
+                "id": "5b5759b8c481e1544a8b4587"
+            },
+            "schedules": [
+                {
+                    "id": "5b5f9c82c481e1ed718b4581",
+                    "days": [
+                        0,
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6
+                    ],
+                    "start": "2018-07-30T07:00:00+00:00",
+                    "repeat": "weekly",
+                    "type": "available"
+                }
+            ],
+            "createdBy": {
+                "id": "5b5f6b4cc481e1017f8b458c"
+            },
+            "updatedAt": "2018-07-30T23:17:22+00:00"
+        },
+        {
+            "id": "5b60e68a332e75c36a8b45c1",
+            "object": "user_profile",
+            "bio": null,
+            "name": "Taylor Test",
+            "phone": null,
+            "user": {
+                "id": "5b60e68a332e75c36a8b45c2"
+            },
+            "seller": {
+                "id": "5b5759b8c481e1544a8b4587"
+            },
+            "schedules": [],
+            "createdBy": {
+                "id": "5b5f6a85c381e10a218b4579"
+            },
+            "updatedAt": "2018-07-31T22:45:30+00:00"
+        },
+        {
+            "id": "5b96b44ac681e166358b4602",
+            "object": "user_profile",
+            "bio": null,
+            "name": "Alyssa Hebrio",
+            "phone": null,
+            "user": {
+                "id": "5b69dfa4c681e103168b457a"
+            },
+            "seller": {
+                "id": "5b5759b8c481e1544a8b4587"
+            },
+            "schedules": [
+                {
+                    "id": "5d1e32ec311cf543b375dbe1",
+                    "days": [
+                        0,
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6
+                    ],
+                    "start": "2019-07-04T07:00:00+00:00",
+                    "repeat": "weekly",
+                    "type": "available"
+                }
+            ],
+            "createdBy": {
+                "id": "5b5f6a85c381e10a218b4579"
+            },
+            "updatedAt": "2019-07-04T17:10:04+00:00"
+        },
+        {
+            "id": "5d64535dd1b85574461c386e",
+            "object": "user_profile",
+            "bio": null,
+            "name": "Taylor Gilroy",
+            "phone": "9168332291",
+            "user": {
+                "id": "5d64535dd1b85574461c386f"
+            },
+            "seller": {
+                "id": "5b5759b8c481e1544a8b4587"
+            },
+            "schedules": [
+                {
+                    "id": "5d645371d1b85579b1738dc5",
+                    "days": [
+                        0,
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6
+                    ],
+                    "start": "2020-12-17T08:00:00+00:00",
+                    "end": "2020-12-21T07:59:59+00:00",
+                    "repeat": "weekly",
+                    "type": "available"
+                },
+                {
+                    "id": "5fde967b3808462bf167716a",
+                    "days": [
+                        1
+                    ],
+                    "start": "2020-12-21T08:00:00+00:00",
+                    "end": "2020-12-22T07:59:59+00:00",
+                    "repeat": "weekly",
+                    "type": "available",
+                    "timeRanges": [
+                        {
+                            "startTime": 1200,
+                            "endTime": 1400
+                        }
+                    ]
+                },
+                {
+                    "id": "5fdfb165e5ff6b456b20153e",
+                    "days": [
+                        1
+                    ],
+                    "start": "2020-12-21T08:00:00+00:00",
+                    "end": "2020-12-22T07:59:59+00:00",
+                    "repeat": "weekly",
+                    "type": "available",
+                    "timeRanges": [
+                        {
+                            "startTime": 1500,
+                            "endTime": 1630
+                        }
+                    ]
+                }
+            ],
+            "createdBy": {
+                "id": "5b5f6a85c381e10a218b4579"
+            },
+            "updatedAt": "2020-12-20T20:17:41+00:00"
+        },
+        {
+            "id": "5e0e4d3c0a8feb6e395442c1",
+            "object": "user_profile",
+            "bio": null,
+            "name": "Jamie Vizmanos",
+            "phone": null,
+            "user": {
+                "id": "5dfd444ad20a7a25212d0fab"
+            },
+            "seller": {
+                "id": "5b5759b8c481e1544a8b4587"
+            },
+            "schedules": [
+                {
+                    "id": "5e0e4d68da20103b52543a52",
+                    "days": [
+                        0,
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6
+                    ],
+                    "start": "2020-01-02T08:00:00+00:00",
+                    "end": "2020-12-24T07:59:59+00:00",
+                    "repeat": "weekly",
+                    "type": "available",
+                    "timeRanges": [
+                        {
+                            "startTime": 1030,
+                            "endTime": 1930
+                        }
+                    ]
+                }
+            ],
+            "createdBy": {
+                "id": "5ce196696fd1610b151e248a"
+            },
+            "updatedAt": "2020-12-18T05:51:19+00:00"
+        },
+        {
+            "id": "5f35caeeb003e81f0738182d",
+            "object": "user_profile",
+            "bio": null,
+            "name": "Corey Yoskowitz",
+            "phone": null,
+            "user": {
+                "id": "5f35caeeb003e81f0738182e"
+            },
+            "seller": {
+                "id": "5b5759b8c481e1544a8b4587"
+            },
+            "schedules": [
+                {
+                    "id": "5f35cafc30d6c57eb86783f9",
+                    "days": [
+                        0,
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6
+                    ],
+                    "start": "2020-08-13T07:00:00+00:00",
+                    "repeat": "weekly",
+                    "type": "available"
+                },
+                {
+                    "id": "5fd7f78d84567351c93fc9fe",
+                    "days": [
+                        5
+                    ],
+                    "start": "2020-12-14T08:00:00+00:00",
+                    "repeat": "weekly",
+                    "type": "available",
+                    "timeRanges": [
+                        {
+                            "startTime": 500,
+                            "endTime": 1500
+                        }
+                    ]
+                },
+                {
+                    "id": "5fdc2d470ee4a111071f3012",
+                    "days": [
+                        1,
+                        2,
+                        3,
+                        4
+                    ],
+                    "start": "2020-12-17T08:00:00+00:00",
+                    "repeat": "weekly",
+                    "type": "available",
+                    "timeRanges": [
+                        {
+                            "startTime": 900,
+                            "endTime": 2200
+                        }
+                    ]
+                },
+                {
+                    "id": "5fe0e0455d3fa349ae7c2600",
+                    "days": [
+                        5
+                    ],
+                    "start": "2020-12-21T08:00:00+00:00",
+                    "repeat": "weekly",
+                    "type": "unavailable",
+                    "timeRanges": [
+                        {
+                            "startTime": 1500,
+                            "endTime": 2355
+                        }
+                    ]
+                },
+                {
+                    "id": "5fe0e089aefb8c6f953ab2a8",
+                    "days": [
+                        0,
+                        6
+                    ],
+                    "start": "2020-12-21T08:00:00+00:00",
+                    "repeat": "weekly",
+                    "type": "unavailable"
+                }
+            ],
+            "createdBy": {
+                "id": "5b5f6a85c381e10a218b4579"
+            },
+            "updatedAt": "2020-12-21T17:51:05+00:00"
+        },
+        {
+            "id": "5f557d75e3b10b1432210b71",
+            "object": "user_profile",
+            "bio": null,
+            "name": "Dominic Desantis",
+            "phone": null,
+            "user": {
+                "id": "5f557d75e3b10b1432210b72"
+            },
+            "seller": {
+                "id": "5b5759b8c481e1544a8b4587"
+            },
+            "schedules": [
+                {
+                    "id": "5f557d80af9baf4a99068b8b",
+                    "days": [
+                        0,
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6
+                    ],
+                    "start": "2020-09-06T07:00:00+00:00",
+                    "end": "2021-02-25T07:59:59+00:00",
+                    "repeat": "weekly",
+                    "type": "available"
+                },
+                {
+                    "id": "5fdc2df08f17de789c3fb14b",
+                    "days": [
+                        0,
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6
+                    ],
+                    "start": "2020-12-17T08:00:00+00:00",
+                    "repeat": "weekly",
+                    "type": "available",
+                    "timeRanges": [
+                        {
+                            "startTime": 800,
+                            "endTime": 2000
+                        }
+                    ]
+                },
+                {
+                    "id": "5fe0e0eee012ce29f644cffb",
+                    "days": [
+                        2
+                    ],
+                    "start": "2021-01-06T08:00:00+00:00",
+                    "repeat": "weekly",
+                    "type": "unavailable"
+                },
+                {
+                    "id": "5fe0f511c1b61b13372d9e83",
+                    "days": [
+                        0,
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6
+                    ],
+                    "start": "2020-12-21T08:00:00+00:00",
+                    "repeat": "weekly",
+                    "type": "unavailable",
+                    "timeRanges": [
+                        {
+                            "startTime": 0,
+                            "endTime": 755
+                        }
+                    ]
+                },
+                {
+                    "id": "5fe0f52c13468314847b28b4",
+                    "days": [
+                        0,
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6
+                    ],
+                    "start": "2020-12-21T08:00:00+00:00",
+                    "repeat": "weekly",
+                    "type": "unavailable",
+                    "timeRanges": [
+                        {
+                            "startTime": 2005,
+                            "endTime": 2355
+                        }
+                    ]
+                }
+            ],
+            "createdBy": {
+                "id": "5b5f6a85c381e10a218b4579"
+            },
+            "updatedAt": "2020-12-21T19:19:08+00:00"
+        },
+        {
+            "id": "5f557da7be5bf53ed6719148",
+            "object": "user_profile",
+            "bio": null,
+            "name": "Gavin Lovett",
+            "phone": null,
+            "user": {
+                "id": "5f557da7be5bf53ed6719149"
+            },
+            "seller": {
+                "id": "5b5759b8c481e1544a8b4587"
+            },
+            "schedules": [
+                {
+                    "id": "5f557db6ea4f1748df20896d",
+                    "days": [
+                        0,
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6
+                    ],
+                    "start": "2020-09-06T07:00:00+00:00",
+                    "end": "2020-12-23T07:59:59+00:00",
+                    "repeat": "weekly",
+                    "type": "available"
+                }
+            ],
+            "createdBy": {
+                "id": "5b5f6a85c381e10a218b4579"
+            },
+            "updatedAt": "2020-12-18T04:07:59+00:00"
+        },
+        {
+            "id": "5f6cfdd3a00dee5ac65a973c",
+            "object": "user_profile",
+            "bio": null,
+            "name": "Natalie Daratony ",
+            "phone": null,
+            "user": {
+                "id": "5f6cfdd3a00dee5ac65a973d"
+            },
+            "seller": {
+                "id": "5b5759b8c481e1544a8b4587"
+            },
+            "schedules": [
+                {
+                    "id": "5f6cfddbcf15055a106a88b3",
+                    "days": [
+                        0,
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6
+                    ],
+                    "start": "2020-09-24T07:00:00+00:00",
+                    "repeat": "weekly",
+                    "type": "available"
+                },
+                {
+                    "id": "5fdc4739b7823e68903192ec",
+                    "days": [
+                        1,
+                        2,
+                        3,
+                        4
+                    ],
+                    "start": "2020-12-17T08:00:00+00:00",
+                    "repeat": "weekly",
+                    "type": "available",
+                    "timeRanges": [
+                        {
+                            "startTime": 1400,
+                            "endTime": 2000
+                        }
+                    ]
+                },
+                {
+                    "id": "5fdc47584d4520497661c5fc",
+                    "days": [
+                        5
+                    ],
+                    "start": "2020-12-17T08:00:00+00:00",
+                    "repeat": "weekly",
+                    "type": "available",
+                    "timeRanges": [
+                        {
+                            "startTime": 600,
+                            "endTime": 2000
+                        }
+                    ]
+                }
+            ],
+            "createdBy": {
+                "id": "5b5f6a85c381e10a218b4579"
+            },
+            "updatedAt": "2020-12-18T06:08:24+00:00"
+        },
+        {
+            "id": "5f88c83cab855531fa4f83a9",
+            "object": "user_profile",
+            "bio": null,
+            "name": "Adam Brodner",
+            "phone": null,
+            "user": {
+                "id": "5f88c83cab855531fa4f83aa"
+            },
+            "seller": {
+                "id": "5b5759b8c481e1544a8b4587"
+            },
+            "schedules": [
+                {
+                    "id": "5f88d1a9744b1d18eb5f49c5",
+                    "days": [
+                        1,
+                        2,
+                        3,
+                        4,
+                        5
+                    ],
+                    "start": "2020-10-15T07:00:00+00:00",
+                    "repeat": "weekly",
+                    "type": "available",
+                    "timeRanges": [
+                        {
+                            "startTime": 800,
+                            "endTime": 1930
+                        }
+                    ]
+                }
+            ],
+            "createdBy": {
+                "id": "5b5f6a85c381e10a218b4579"
+            },
+            "updatedAt": "2020-12-18T05:47:15+00:00"
+        },
+        {
+            "id": "5f90c072a1d97e691d61e04b",
+            "object": "user_profile",
+            "bio": null,
+            "name": "Alla Kondrateva",
+            "phone": null,
+            "user": {
+                "id": "5f90c072a1d97e691d61e04c"
+            },
+            "seller": {
+                "id": "5b5759b8c481e1544a8b4587"
+            },
+            "schedules": [
+                {
+                    "id": "5f90c07a499beb09380ea2fc",
+                    "days": [
+                        0,
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6
+                    ],
+                    "start": "2020-10-21T07:00:00+00:00",
+                    "repeat": "weekly",
+                    "type": "available"
+                }
+            ],
+            "createdBy": {
+                "id": "5b5f6a85c381e10a218b4579"
+            },
+            "updatedAt": "2020-10-21T23:12:58+00:00"
+        },
+        {
+            "id": "5f9b1ed627e0c000d572327a",
+            "object": "user_profile",
+            "bio": null,
+            "name": "Celia",
+            "phone": null,
+            "user": {
+                "id": "5f9a2c29aaa54f61983898e4"
+            },
+            "seller": {
+                "id": "5b5759b8c481e1544a8b4587"
+            },
+            "schedules": [
+                {
+                    "id": "5f9c7387e7d5ce7c2446e3d9",
+                    "days": [
+                        0,
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6
+                    ],
+                    "start": "2020-08-01T07:00:00+00:00",
+                    "repeat": "weekly",
+                    "type": "available",
+                    "timeRanges": [
+                        {
+                            "startTime": 500,
+                            "endTime": 2300
+                        }
+                    ]
+                }
+            ],
+            "createdBy": {
+                "id": "5b5759b8c481e1544a8b4587"
+            },
+            "updatedAt": "2020-10-30T21:39:10+00:00"
+        },
+        {
+            "id": "5f9b25bb5f1b496686066be2",
+            "object": "user_profile",
+            "bio": null,
+            "name": "Abby",
+            "phone": null,
+            "user": {
+                "id": "5f47f7bb4f0ee661cf40b738"
+            },
+            "seller": {
+                "id": "5b5759b8c481e1544a8b4587"
+            },
+            "schedules": [
+                {
+                    "id": "5f9c73a74692ab30a033e86d",
+                    "days": [
+                        1,
+                        2,
+                        3,
+                        4,
+                        5
+                    ],
+                    "start": "2020-10-30T07:00:00+00:00",
+                    "repeat": "weekly",
+                    "type": "available",
+                    "timeRanges": [
+                        {
+                            "startTime": 800,
+                            "endTime": 1630
+                        }
+                    ]
+                }
+            ],
+            "createdBy": {
+                "id": "5b5759b8c481e1544a8b4587"
+            },
+            "updatedAt": "2020-10-30T20:12:23+00:00"
+        },
+        {
+            "id": "5f9b25d1c2b94540e948b034",
+            "object": "user_profile",
+            "bio": null,
+            "name": "Tara",
+            "phone": null,
+            "user": {
+                "id": "5f739c195318b1020a7aa52c"
+            },
+            "seller": {
+                "id": "5b5759b8c481e1544a8b4587"
+            },
+            "schedules": [],
+            "createdBy": {
+                "id": "5b5759b8c481e1544a8b4587"
+            },
+            "updatedAt": "2020-10-29T20:28:01+00:00"
+        },
+        {
+            "id": "5fa20ded26ae5f57fb23b690",
+            "object": "user_profile",
+            "bio": null,
+            "name": "Error-Contact-CSR",
+            "phone": null,
+            "user": {
+                "id": "5fa20ded26ae5f57fb23b691"
+            },
+            "seller": {
+                "id": "5b5759b8c481e1544a8b4587"
+            },
+            "schedules": [],
+            "createdBy": {
+                "id": "5b5f6b3bc381e112218b4579"
+            },
+            "updatedAt": "2020-11-04T02:12:53+00:00"
+        },
+        {
+            "id": "5fad729f6862ac366d022e05",
+            "object": "user_profile",
+            "bio": null,
+            "name": "TBD 1",
+            "phone": null,
+            "user": {
+                "id": "5c0ef059c581e1ec3e8b4573"
+            },
+            "seller": {
+                "id": "5b5759b8c481e1544a8b4587"
+            },
+            "schedules": [
+                {
+                    "id": "5fad72ab304f3221233ca0ce",
+                    "days": [
+                        0,
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6
+                    ],
+                    "start": "2020-11-12T08:00:00+00:00",
+                    "repeat": "weekly",
+                    "type": "available"
+                }
+            ],
+            "createdBy": {
+                "id": "5b5f6a85c381e10a218b4579"
+            },
+            "updatedAt": "2020-11-12T17:36:43+00:00"
+        },
+        {
+            "id": "5fad74131e7e6d1ac04894b7",
+            "object": "user_profile",
+            "bio": null,
+            "name": "TBD 2",
+            "phone": null,
+            "user": {
+                "id": "5fad74131e7e6d1ac04894b8"
+            },
+            "seller": {
+                "id": "5b5759b8c481e1544a8b4587"
+            },
+            "schedules": [
+                {
+                    "id": "5fad7436f3c798439e012d82",
+                    "days": [
+                        0,
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6
+                    ],
+                    "start": "2020-11-12T08:00:00+00:00",
+                    "repeat": "weekly",
+                    "type": "available"
+                }
+            ],
+            "createdBy": {
+                "id": "5b5f6a85c381e10a218b4579"
+            },
+            "updatedAt": "2020-11-12T17:43:18+00:00"
+        },
+        {
+            "id": "5fb2bd74dcae252a553852dc",
+            "object": "user_profile",
+            "bio": null,
+            "name": "Vic Hollins",
+            "phone": null,
+            "user": {
+                "id": "5fb2bd74dcae252a553852dd"
+            },
+            "seller": {
+                "id": "5b5759b8c481e1544a8b4587"
+            },
+            "schedules": [
+                {
+                    "id": "5fb2bd803c5c3067f326199f",
+                    "days": [
+                        0,
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6
+                    ],
+                    "start": "2020-11-16T08:00:00+00:00",
+                    "repeat": "weekly",
+                    "type": "available"
+                },
+                {
+                    "id": "5fdc4583df174056055ed557",
+                    "days": [
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6
+                    ],
+                    "start": "2020-12-17T08:00:00+00:00",
+                    "repeat": "weekly",
+                    "type": "available",
+                    "timeRanges": [
+                        {
+                            "startTime": 800,
+                            "endTime": 2000
+                        }
+                    ]
+                },
+                {
+                    "id": "5fe0e18553562214fa4e4113",
+                    "days": [
+                        0
+                    ],
+                    "start": "2020-12-21T08:00:00+00:00",
+                    "repeat": "weekly",
+                    "type": "unavailable"
+                }
+            ],
+            "createdBy": {
+                "id": "5b5f6a85c381e10a218b4579"
+            },
+            "updatedAt": "2020-12-21T17:55:17+00:00"
+        },
+        {
+            "id": "5fb843a45297f61040640021",
+            "object": "user_profile",
+            "bio": null,
+            "name": "Hong Nguyen",
+            "phone": null,
+            "user": {
+                "id": "5fb843a45297f61040640022"
+            },
+            "seller": {
+                "id": "5b5759b8c481e1544a8b4587"
+            },
+            "schedules": [
+                {
+                    "id": "5fb843afdfb2df75a57b5a26",
+                    "days": [
+                        0,
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6
+                    ],
+                    "start": "2020-11-20T08:00:00+00:00",
+                    "repeat": "weekly",
+                    "type": "available"
+                },
+                {
+                    "id": "5fe0f55e5b2f7115be7df465",
+                    "days": [
+                        1,
+                        2,
+                        3,
+                        4,
+                        5
+                    ],
+                    "start": "2020-12-21T08:00:00+00:00",
+                    "repeat": "weekly",
+                    "type": "available",
+                    "timeRanges": [
+                        {
+                            "startTime": 800,
+                            "endTime": 1800
+                        }
+                    ]
+                },
+                {
+                    "id": "5fe0f57a0c50f456db566f2a",
+                    "days": [
+                        0,
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6
+                    ],
+                    "start": "2020-12-21T08:00:00+00:00",
+                    "repeat": "weekly",
+                    "type": "unavailable",
+                    "timeRanges": [
+                        {
+                            "startTime": 1805,
+                            "endTime": 2355
+                        }
+                    ]
+                },
+                {
+                    "id": "5fe0f5c0d8254b5e3f32b5e1",
+                    "days": [
+                        0,
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6
+                    ],
+                    "start": "2020-12-21T08:00:00+00:00",
+                    "repeat": "weekly",
+                    "type": "unavailable",
+                    "timeRanges": [
+                        {
+                            "startTime": 0,
+                            "endTime": 755
+                        }
+                    ]
+                },
+                {
+                    "id": "5fe0f5cfd8254b5e3f32b5e3",
+                    "days": [
+                        0,
+                        6
+                    ],
+                    "start": "2020-12-21T08:00:00+00:00",
+                    "repeat": "weekly",
+                    "type": "unavailable"
+                }
+            ],
+            "createdBy": {
+                "id": "5b5f6a85c381e10a218b4579"
+            },
+            "updatedAt": "2020-12-21T19:21:51+00:00"
+        },
+        {
+            "id": "5fbeb72a66c75573bc42b847",
+            "object": "user_profile",
+            "bio": null,
+            "name": "Kira Rudjen",
+            "phone": null,
+            "user": {
+                "id": "5fbeb72a66c75573bc42b848"
+            },
+            "seller": {
+                "id": "5b5759b8c481e1544a8b4587"
+            },
+            "schedules": [
+                {
+                    "id": "5fbeb739b90874533946fcbe",
+                    "days": [
+                        0,
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6
+                    ],
+                    "start": "2020-11-25T08:00:00+00:00",
+                    "end": "2021-01-15T07:59:59+00:00",
+                    "repeat": "weekly",
+                    "type": "available"
+                },
+                {
+                    "id": "5fdc41b564b33e7b513ce2c7",
+                    "days": [
+                        2,
+                        4,
+                        5,
+                        6
+                    ],
+                    "start": "2020-12-17T08:00:00+00:00",
+                    "repeat": "weekly",
+                    "type": "available",
+                    "timeRanges": [
+                        {
+                            "startTime": 800,
+                            "endTime": 2130
+                        }
+                    ]
+                },
+                {
+                    "id": "5fe0e12bef61a954b96a92e3",
+                    "days": [
+                        0,
+                        3
+                    ],
+                    "start": "2020-12-21T08:00:00+00:00",
+                    "repeat": "weekly",
+                    "type": "unavailable"
+                }
+            ],
+            "createdBy": {
+                "id": "5b5f6a85c381e10a218b4579"
+            },
+            "updatedAt": "2020-12-21T17:53:47+00:00"
+        }
+    ],
+    "paging": {
+        "next": "/api/sellers/5b5759b8c481e1544a8b4587/guides?seller=5b5759b8c481e1544a8b4587&limit=20&skip=20"
+    }
+}

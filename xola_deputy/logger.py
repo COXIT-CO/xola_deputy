@@ -6,7 +6,7 @@ from logging.config import dictConfig
 
 from global_config import CONFIG_FILE_NAME, LOG_CONFIG
 
-DEFAULT_NAME_FLASK_LOGGER = 'werkzeugq'
+DEFAULT_NAME_FLASK_LOGGER = 'werkzeuq'
 
 class LoggerClient():
     """Create logger object"""

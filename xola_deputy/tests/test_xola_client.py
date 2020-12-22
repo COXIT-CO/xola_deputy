@@ -1,14 +1,40 @@
 import json
-import requests
+import pytest
+from requests.models import Response
 
+from unittest.mock import patch, Mock
 from xola_deputy.xola_client import XolaClient
 from xola_deputy.logger import LoggerClient
 
 logging = LoggerClient().get_logger()
 xola = XolaClient(logging)
 
-def test_take_params_from_responce():
+@pytest.fixture()
+def get_event_json():
+    with open("tests/data_event_from_xola.json", "r") as file:
+        request = json.load(file)
+    return request
 
+@pytest.fixture()
+def get_order_json():
+    with open("tests/test_response_data.json", "r") as file:
+        request = json.load(file)
+    return request
+
+@pytest.fixture()
+def get_guide_json():
+    with open("tests/data_list_of_guide_xola.json", "r") as file:
+        request = json.load(file)
+    return request
+
+def test_subscribe_to_webhook():
+    status_codes = [(200,False),(409,False),(201,True)]
+    for status_code in status_codes:
+        with patch.object(XolaClient, 'post_request_subscribe_to_webhook', return_value=status_code[0]):
+            result = xola.subscribe_to_webhook()
+            assert result == status_code[1]
+
+def test_calculation_of_employee():
     assert xola.calculation_of_employee(1,10) == 1
     assert xola.calculation_of_employee(20, 10) == 1
     assert xola.calculation_of_employee(25, 26) == 2
@@ -18,56 +44,57 @@ def test_convert_time():
     assert xola.convert_time("2020-12-07T12:55:40+00:00") == "2020-12-07"
     assert xola.convert_time("2020-12-01T10:14:40+00:00") == "2020-12-01"
 
-def test_subscribe_to_webhook():
-    bool_status = xola.subscribe_to_webhook("installation.delete")
+def test_take_params_from_responce(get_order_json,get_event_json):
+    request_order = get_order_json
+    with patch.object(XolaClient, '_get_data_from_event',) as mock_func:
+        mock_func.return_value = get_event_json
+        params, number_shifts, mapping = xola.take_params_from_responce(request_order)
+        assert type(params) == dict
+        assert type(number_shifts) == int
+        assert type(mapping) == dict
 
-    url = "https://xola.com/api/users/5fbe98dc59b3ed24da1e656d/hooks"
-    headers = {
-        'X-API-KEY': "57YSBIlN_U29-NQmfAsp2xw04_LZkzfemv5o-rCgYO0"
-    }
-    response = requests.get(url=url, headers=headers)
-    id_hooks = ""
-    for hook in response.json()["data"]:
-        if hook["eventName"] == "installation.delete":
-            id_hooks = hook["id"]
-    url = "https://xola.com/api/users/5fbe98dc59b3ed24da1e656d/hooks/"+ id_hooks
-    requests.delete(url=url, headers=headers)
+def test_start(get_order_json):
+    with patch.object(XolaClient, 'take_params_from_responce', return_value= TypeError):
+        params, number_shifts, mapping =  xola.start(get_order_json)
+        assert params == False
+        assert number_shifts == False
+        assert mapping == False
+    with patch.object(XolaClient, 'take_params_from_responce', return_value= (True,True,True)):
+        params, number_shifts, mapping =  xola.start(get_order_json)
+        assert params != False
+        assert number_shifts != False
+        assert mapping != False
 
-    assert bool_status == True
-    assert xola.subscribe_to_webhook() == False
-    assert xola.subscribe_to_webhook("experience.create") == False
+def test_get_list_of_guids(get_guide_json):
+    with patch.object(XolaClient, '_get_request_list_guides') as mock_func:
+        the_response = Mock(spec=Response)
+        the_response.json.return_value = get_guide_json
+        the_response.status_code = 400
+        mock_func.return_value = the_response
+        assert xola.get_list_of_guids() == False
 
-
-def test_get_data_from_event():
-    xola._event_id = "5fc69bb3572e05b862364adf"
-    response = xola._get_data_from_event()
-    assert response.status_code == 200
-
-def test_start():
-    with open("tests/test_response_data.json", "r") as file:
-        requst =json.load(file)
-
-    assert type(xola.start(requst)[0]) == dict
+    with patch.object(XolaClient, '_get_request_list_guides', ) as mock_func:
+        the_response = Mock(spec=Response)
+        the_response.json.return_value = get_guide_json
+        the_response.status_code = 200
+        mock_func.return_value = the_response
+        assert type(xola.get_list_of_guids()) == list
 
 def test_take_guide_id():
-    name = "Alyssa Hebrio"
-    id_guides = "5b96b44ac681e166358b4602"
-    test_id = xola.take_guide_id(name)
-    assert test_id == id_guides
-    name = "Vi VI"
-    test_id = xola.take_guide_id(name)
-    assert test_id == False
+    with patch.object(XolaClient, 'get_list_of_guids',) as mock_func:
+        mock_func.return_value = [('Maaiz - GM Test', '5b5f8e90c481e1e54e8b4571'),
+                                  ('Taylor Test', '5b60e68a332e75c36a8b45c1'),
+                                  ]
+        assert type(xola.take_guide_id('Maaiz - GM Test')) == str
+        assert xola.take_guide_id('Maria Test') == False
 
 def test_post_guides_for_event():
-    assert xola.post_guides_for_event("Gavin Lovett") == False
+    status_codes = [(200, False), (409, False), (201, True)]
+    for status_code in status_codes:
+        with patch.object(XolaClient, 'post_guides_for_event', return_value=status_code[0]):
+            with patch.object(XolaClient, 'take_guide_id', return_value=True):
+                result = xola.verification_guides_for_event('Adam Brodner')
+                assert result == status_code[1]
 
 
-"""@patch('xola_client.XolaClient.subscribe_to_webhook', return_value=True)
-def test_subscribe_to_webhook(subscribe_to_webhook):
-    assert subscribe_to_webhook() == True
 
-
-@patch('xola_client.XolaClient.get_data_from_event', return_value = requests.Response)
-def test_get_data_from_event(get_data_from_event):
-    assert get_data_from_event() == requests.Response
-"""
