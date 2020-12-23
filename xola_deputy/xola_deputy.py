@@ -8,9 +8,13 @@ from google_sheets_client import GoogleSheetsClient
 from global_config import create_tread
 
 app = Flask(__name__)
-logging = LoggerClient().get_logger()
+logging = LoggerClient()
+logging.settings_init()
+logging.get_logger()
+
 xola = XolaClient(logging)
 deputy = DeputyClient(logging)
+deputy.init_settings()
 sheets = GoogleSheetsClient(deputy, logging)
 
 @app.route("/xola", methods=['POST'])
@@ -99,6 +103,7 @@ def deputy_unvial():
 
 
 if __name__ == '__main__':
+
     if xola.subscribe_to_webhook() is False:
         logging.warning("Can not subscribe to webhook")
     deputy.subscribe_to_webhooks()

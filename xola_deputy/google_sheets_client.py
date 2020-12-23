@@ -17,11 +17,13 @@ class GoogleSheetsClient():
     """This is mediator class, where process data and post to google sheets"""
 
     def __init__(self, deputy, logger):
+        self.deputy = deputy
+        self.logger = logger
+
+    def init_settings(self):
         config = configparser.ConfigParser()
         config.read(CONFIG_FILE_NAME)
         self.spreadsheet_id = config['GOOGLE']['spreadsheet_id']
-        self.deputy = deputy
-        self.logger = logger
         self.sheets_api = SpreadsheetAPI(self.spreadsheet_id)
 
     def change_sheets(self, count_of_days, id_location):
@@ -42,9 +44,8 @@ class GoogleSheetsClient():
             while date_start <= date_end:
                 list_of_free_employee.append([date_start, number_of_employee])
                 date_start = date_start + DELAY
-            time_of_shits = self.deputy.get_people_unavailability(
+            time_of_shits = self.deputy.process_people_unavailability(
                 date_shift, id_location)[1]
-
             self.calculation_unavailability_count(
                 time_of_shits, list_of_free_employee)
 

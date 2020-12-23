@@ -11,8 +11,9 @@ DEFAULT_NAME_FLASK_LOGGER = 'werkzeuq'
 class LoggerClient():
     """Create logger object"""
     logger = logging.getLogger()
+    logmode = "console"
 
-    def __init__(self):
+    def settings_init(self):
         config_console = configparser.ConfigParser()
         config_console.read(CONFIG_FILE_NAME)
         self.logmode = config_console["LOG"]["log_mode"]

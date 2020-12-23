@@ -15,73 +15,92 @@ class DeputyClient():
     __url = ""
 
     def __init__(self, logger):
+        self.log = logger
+
+    def init_settings(self):
         config = configparser.ConfigParser()
         config.read(CONFIG_FILE_NAME)
-        deputy_access_token, deputy_id = config["DEPUTY"]["deputy_access_token"],\
-            config["DEPUTY"]["deputy_id"]
+        deputy_access_token, deputy_id = config["DEPUTY"]["deputy_access_token"], \
+                                         config["DEPUTY"]["deputy_id"]
         self.__headers = {
             'Authorization': 'OAuth ' + deputy_access_token,
         }
         self.__url = 'https://' + deputy_id + '/api/v1/'
         self.public_url = config['URL']['public_url']
-        self.log = logger
 
-    def post_new_shift(self, params_for_deputy):
-        """post a new shift
-        :param params_for_deputy: data to post request
-        :return: str. id shift, and correct date
-        """
+    def _post_new_shift(self,params_for_deputy):
         data = self.update_params_for_post_deputy_style(params_for_deputy)
         url = self.__url + 'supervise/roster/'
         try:
             response = requests.post(
                 url=url, headers=self.__headers, data=data)
-            return str(response.json()["Id"]), response.json()["Date"]
-        except KeyError as ex:
-            self.log.warning(
-                "Can not find availability employee",)
-            return False, False
+            return response.json()
         except requests.RequestException as ex:
             self.log.error(
                 "Unable to send post request to DEPUTY",
                 exc_info=ex)
 
-    def get_people_unavailability(self, date, id_location):
+    def process_data_from_new_shift(self, params_for_deputy=None):
+        """post a new shift
+        :param params_for_deputy: data to post request
+        :return: str. id shift, and correct date
+        """
+        try:
+            response = self._post_new_shift(params_for_deputy)
+            return str(response["Id"]), response["Date"]
+        except (TypeError, KeyError):
+            self.log.warning(
+                "Can not find availability employee",)
+            return False, False
+
+    def _get_people_unavailability(self, date, id_location):
+        url = self.__url + 'supervise/roster/' + date + "/" + id_location
+        try:
+            response = requests.get(url=url, headers=self.__headers, )
+            return response.json()
+        except requests.RequestException as ex:
+            self.log.error(
+                "Unable to send post request to DEPUTY",
+                exc_info=ex)
+
+    def process_people_unavailability(self, date, id_location):
         """MAke post request , take all shifts,and search which people have a work
         :param data: in which data we looking for shift
         :return: list of unavailable employee
         """
-        url = self.__url + 'supervise/roster/' + date + "/" + id_location
         unavailable_employee = []
         unavailable_time = []
         try:
-
-            response = requests.get(url=url, headers=self.__headers,)
-            for shift in response.json():
+            response = self._get_people_unavailability(date,id_location)
+            for shift in response:
                 unavailable_time.append([shift["StartTime"], shift["EndTime"]])
                 if shift["_DPMetaData"]["EmployeeInfo"]:
                     unavailable_employee.append(
                         str(shift["_DPMetaData"]["EmployeeInfo"]["Id"]))
             return unavailable_employee, unavailable_time
+        except (ValueError, TypeError):
+            self.log.error("Bad JSON data")
+            return False
 
+    def _get_recomendation(self,shift_id):
+        url = self.__url + 'supervise/getrecommendation/' + shift_id
+        try:
+            response = requests.get(url=url, headers=self.__headers, )
+            return response.json()
         except requests.RequestException as ex:
             self.log.error(
                 "Unable to send post request to DEPUTY",
                 exc_info=ex)
-        except (ValueError, TypeError):
-            self.log.error("Bad JSON data")
-            return False
 
     def get_people_availability(self, shift_id, unavi_employee):
         """Take id employee,which can work in taken shift
         :param shift_id: id shift ,which have not employee
         :return: id free employeee
         """
-        url = self.__url + 'supervise/getrecommendation/' + shift_id
         try:
-            response = requests.get(url=url, headers=self.__headers,)
+            response = self._get_recomendation(shift_id)
 
-            free_employee = list(response.json()["trained"])
+            free_employee = list(response["trained"])
             if not unavi_employee:  # check if we have all employee free
                 return free_employee[0]
 
@@ -91,13 +110,9 @@ class DeputyClient():
                 return self.check_all_job_employee(unavi_employee)
             return employees[0]
 
-        except IndexError:
+        except (TypeError,IndexError):
             self.log.warning("Not Available employee")
             return False
-        except requests.RequestException as ex:
-            self.log.error(
-                "Unable to send post request to DEPUTY",
-                exc_info=ex)
 
     def get_employee_name(self, id_employee):
         """
