@@ -1,0 +1,60 @@
+{
+    "Id": 89,
+    "Date": "2020-12-09T00:00:00+02:00",
+    "StartTime": 1607526000,
+    "EndTime": 1607526100,
+    "Mealbreak": "2020-12-09T00:00:00+02:00",
+    "Slots": [],
+    "TotalTime": 0.03,
+    "Cost": 0,
+    "OperationalUnit": 2,
+    "Employee": 2,
+    "Comment": null,
+    "Warning": "",
+    "WarningOverrideComment": null,
+    "Published": null,
+    "MatchedByTimesheet": 0,
+    "Open": null,
+    "ApprovalRequired": false,
+    "ConfirmStatus": 0,
+    "ConfirmComment": "",
+    "ConfirmBy": 0,
+    "ConfirmTime": 0,
+    "SwapStatus": 0,
+    "SwapManageBy": null,
+    "ShiftTemplate": null,
+    "ConnectStatus": null,
+    "Creator": 1,
+    "Created": "2020-12-23T12:03:50+02:00",
+    "Modified": "2020-12-23T12:03:50+02:00",
+    "OnCost": 0,
+    "StartTimeLocalized": "2020-12-09T17:00:00+02:00",
+    "EndTimeLocalized": "2020-12-09T17:01:40+02:00",
+    "ExternalId": null,
+    "ConnectCreator": null,
+    "_DPMetaData": {
+        "System": "Roster",
+        "CreatorInfo": {
+            "Id": 1,
+            "DisplayName": "Ryptic",
+            "EmployeeProfile": 1,
+            "Employee": 1,
+            "Photo": "https://d11hmzhsuwuq9f.cloudfront.net/my/avatar?name=R&width=135&height=135"
+        },
+        "OperationalUnitInfo": {
+            "Id": 2,
+            "OperationalUnitName": "Dlt - Admin",
+            "Company": 1,
+            "CompanyName": "APPing",
+            "LabelWithCompany": "[638] Dlt - Admin"
+        },
+        "EmployeeInfo": {
+            "Id": 2,
+            "DisplayName": "Chris Singe",
+            "EmployeeProfile": 2,
+            "Employee": 2,
+            "Photo": "https://d11hmzhsuwuq9f.cloudfront.net/my/avatar?name=C+S&width=135&height=135"
+        },
+        "SwapManageByInfo": []
+    }
+}

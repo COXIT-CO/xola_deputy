@@ -1,0 +1,43 @@
+{
+    "id": "5fbf2460572e05b8624a8568",
+    "start": "2020-11-27T11:00:00+00:00",
+    "actualStart": "2020-11-27T19:00:00+00:00",
+    "end": "2020-11-27T12:59:59+00:00",
+    "title": "Virtual Escape the Aliens",
+    "experience": {
+        "id": "5b58a24fc481e1a2168b456a"
+    },
+    "groupId": null,
+    "max": null,
+    "open": 0,
+    "private": true,
+    "quantity": {
+        "confirmed": 10,
+        "pending": 0,
+        "declined": 0,
+        "failed": 0,
+        "offered": 0,
+        "canceled": 0,
+        "reserved": 10,
+        "returned": 0
+    },
+    "seller": {
+        "id": "5b5759b8c481e1544a8b4587"
+    },
+    "orders": [
+        {
+            "id": "5fbf2460e84449207b3d9331",
+            "type": "order"
+        }
+    ],
+    "object": "event",
+    "guides": [],
+    "updated": "2020-11-27T21:03:28+00:00",
+    "notes": [],
+    "resourceUsages": [],
+    "organizer": {
+        "id": "5fbf2460e84449207b3d932d",
+        "name": "Steve Purdy"
+    },
+    "virtualMeeting": null
+}
