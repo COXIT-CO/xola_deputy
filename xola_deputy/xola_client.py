@@ -4,16 +4,13 @@ import configparser
 from datetime import datetime
 from math import ceil
 import json
-import csv
 import requests
 
-from setup import CONFIG_FILE_NAME
+from global_config import compare_mapping, CONFIG_FILE_NAME
 
 HTTP_CREATED = 201
 HTTP_CONFLICT = 409
 
-FILE_NAME_MAPPING = "mapping.csv"
-DELIMITER = ","
 
 class XolaClient():
     """connect to XOLA API"""
@@ -31,13 +28,13 @@ class XolaClient():
         }
         self.log = logger
 
-    def subscribe_to_webhook(self,):
+    def subscribe_to_webhook(self, event_name="order.create"):
         """do post request to xola api: subscribe to weebhook(order.created)
         :param public_url: public url,where post notification
         :return: bool, false if something wrong, true if all good
         """
         url = self.__url + "users/" + self.__user_id + "/hooks"
-        param = {"eventName": "order.create", "url": self.public_url + "/xola"}
+        param = {"eventName": event_name, "url": self.public_url + "/xola"}
         json_mylist = json.dumps(param)
         data = f"{json_mylist}"
         try:
@@ -57,7 +54,7 @@ class XolaClient():
         except requests.RequestException as ex:
             self.log.error("Unable to send post request to XOLA", exc_info=ex)
 
-    def get_data_from_event(self,):
+    def _get_data_from_event(self,):
         """
         Make request to XOLA events. Take all data from specific event
         :param event_id: str. with event id
@@ -76,17 +73,19 @@ class XolaClient():
         :param request: json format data
         :return: dict with parameters to deputy
          """
-        self._event_id = request.json["data"]["items"][0]["event"]["id"]
-        response = self.get_data_from_event()
+        self._event_id = request["data"]["items"][0]["event"]["id"]
+        response = self._get_data_from_event()
 
         time_start = self.convert_time(response.json()["start"])
         time_end = self.convert_time(response.json()["end"])
         experience_id = response.json()["experience"]["id"]
+
         # all ticket for 1 event
         ticket_count = response.json()["quantity"]["reserved"]
         self._seller_id = response.json()["seller"]["id"]
 
-        mapping = self.compare_experience_and_area(experience_id)
+        mapping = compare_mapping(experience_id, "experience")
+
         if mapping is False:
             self.log.error("Can not find experience in json file")
             raise ValueError
@@ -95,7 +94,9 @@ class XolaClient():
         params = {
             "intStartTimestamp": time_start,
             "intEndTimestamp": time_end,
-            "intOpunitId": int(mapping["Area"])+2,
+            # we need plus 2,because it is specific validation from deputy post
+            # request
+            "intOpunitId": int(mapping["Area"]) + 2,
         }
 
         number_shifts = self.calculation_of_employee(shift_count, ticket_count)
@@ -105,8 +106,9 @@ class XolaClient():
     def start(self, request):
         """starting"""
         try:
-            params, number_shifts, mapping = self.take_params_from_responce(request)
-            return params, number_shifts, mapping
+            params, number_shifts, title = self.take_params_from_responce(
+                request)
+            return params, number_shifts, title
         except (ValueError, TypeError):
             self.log.error("Bad JSON data")
             return False
@@ -188,24 +190,11 @@ class XolaClient():
         return ceil(ticket_count / shift_count)
 
     @staticmethod
-    def compare_experience_and_area(experience_id):
-        """
-        :param experience_id: id experience from xola
-        :return: mapping dict
-        """
-        with open(FILE_NAME_MAPPING) as r_file:
-            file_reader = csv.DictReader(r_file, delimiter=DELIMITER)
-            for exp_dict in file_reader:
-                if exp_dict["experience_id"] == experience_id:
-                    return exp_dict
-        return False
-
-    @staticmethod
     def convert_time(time):
         """change data and time into UNIX time stamp
         :param time: time format in iso format
 
-        :return: unix time stamp
+        :return: str time
         """
-        timestamp = datetime.fromisoformat(time).timestamp()
-        return int(timestamp)
+        str_date = datetime.fromisoformat(time).strftime("%Y-%m-%d")
+        return str_date

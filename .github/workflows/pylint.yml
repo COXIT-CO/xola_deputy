@@ -20,4 +20,4 @@ jobs:
         pip install -r requirements.txt
     - name: Analysing the code with pylint
       run: |
-        pylint xola_deputy/xola_client.py xola_deputy/xola_deputy.py xola_deputy/deputy_client.py xola_deputy/config_logger.py xola_deputy/logger.py setup.py
+        pylint setup.py xola_deputy/deputy_client.py xola_deputy/global_config.py xola_deputy/logger.py xola_deputy/spreadsheet_api.py xola_deputy/xola_client.py xola_deputy/xola_deputy.py xola_deputy/google_sheets_client.py

@@ -3,12 +3,10 @@ import configparser
 
 import logging
 from logging.config import dictConfig
-from config_logger import LOG_CONFIG
 
-from setup import CONFIG_FILE_NAME
+from global_config import CONFIG_FILE_NAME, LOG_CONFIG
 
 DEFAULT_NAME_FLASK_LOGGER = 'werkzeug'
-
 
 class LoggerClient():
     """Create logger object"""
