@@ -1,7 +1,6 @@
 import pytest
 import json
-from unittest.mock import patch, Mock
-import requests
+from unittest.mock import patch
 
 from xola_deputy.deputy_client import DeputyClient
 from xola_deputy.logger import LoggerClient
@@ -27,6 +26,17 @@ def get_recomendation_json():
         request = json.load(file)
     return request
 
+@pytest.fixture()
+def get_dayoff_json():
+    with open("tests/data_unvial_employee_deputy.json", "r") as file:
+        request = json.load(file)
+    return request
+
+@pytest.fixture()
+def get_employee_json():
+    with open("tests/data_emplloyee_info_deputy.json", "r") as file:
+        request = json.load(file)
+    return request
 
 def test_process_data_from_new_shift(get_shift_json):
     with patch.object(DeputyClient, '_post_new_shift') as mock_func:
@@ -81,6 +91,40 @@ def test_update_params_for_post_deputy_style():
     test_param={"test":1}
     data = deputy.update_params_for_post_deputy_style(test_param)
     assert type(data) == str
+
+def test_get_employee_unavail(get_dayoff_json):
+    with patch.object(DeputyClient, '_get_request_for_employee_unvail') as mock_func:
+        mock_func.return_value = []
+        assert deputy.get_employee_unavail() == False
+
+    with patch.object(DeputyClient, '_get_request_for_employee_unvail') as mock_func:
+        mock_func.return_value = get_dayoff_json
+        with patch.object(DeputyClient, '_get_area_for_employee',return_value = "Aliens"):
+            assert deputy.get_employee_unavail()
+    with patch.object(DeputyClient, '_get_request_for_employee_unvail') as mock_func:
+        mock_func.return_value = get_dayoff_json
+        with patch.object(DeputyClient, '_get_area_for_employee', return_value= False):
+            assert deputy.get_employee_unavail() == False
+
+def test_subscribe_to_webhooks():
+    with patch.object(DeputyClient, '_verification_webhooks', return_value=False):
+        assert deputy.subscribe_to_webhooks() == False
+
+    with patch.object(DeputyClient, '_verification_webhooks', return_value=True):
+        with patch.object(DeputyClient, 'post_params_for_webhook', return_value= 201):
+            assert deputy.subscribe_to_webhooks() == False
+
+    with patch.object(DeputyClient, '_verification_webhooks', return_value=True):
+        with patch.object(DeputyClient, 'post_params_for_webhook', return_value= 200):
+            assert deputy.subscribe_to_webhooks() == True
+
+def test_get_area_for_employee(get_employee_json):
+    with patch.object(DeputyClient, '_get_request_employee') as mock_func:
+        mock_func.return_value = get_employee_json
+        assert deputy._get_area_for_employee("1")
+
+
+
 
 
 

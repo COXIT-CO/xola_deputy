@@ -131,32 +131,36 @@ class DeputyClient():
             self.log.error(
                 "Unable to send post request to DEPUTY",
                 exc_info=ex)
+            return False
+
+    def _get_request_for_employee_unvail(self):
+        url = self.__url + 'supervise/unavail/'
+        try:
+            response = requests.get(url=url, headers=self.__headers, )
+            return response.json()
+        except requests.RequestException as ex:
+            self.log.error(
+                "Unable to send post request to DEPUTY",
+                exc_info=ex)
 
     def get_employee_unavail(self):
         """
          make get request to deputy,take employee unavailability
         :return: when employee have unavailability
         """
-        url = self.__url + 'supervise/unavail/'
-        try:
-            response = requests.get(url=url, headers=self.__headers, )
-            if not response.json():
+        response = self._get_request_for_employee_unvail()
+        if not response:
+            return False
+        list_of_em = []
+        for employee in response:
+            employee_id = str(employee["Employee"])
+            title = self._get_area_for_employee(employee_id)
+            if title is False:
                 return False
-            list_of_em = []
+            list_of_em.append(
+                (employee["StartTime"], employee["EndTime"], title))
 
-            for employee in response.json():
-                employee_id = str(employee["Employee"])
-                title = self._get_area_for_employee(employee_id)
-                if title is False:
-                    return False
-                list_of_em.append(
-                    (employee["StartTime"], employee["EndTime"], title))
-
-            return list_of_em
-        except requests.RequestException as ex:
-            self.log.error(
-                "Unable to send post request to DEPUTY",
-                exc_info=ex)
+        return list_of_em
 
     def post_params_for_webhook(self, topic, address):
         """
@@ -222,10 +226,19 @@ class DeputyClient():
                 count += 1
         return count
 
+    def _get_request_employee(self,employee_id):
+        try:
+            url = self.__url + 'supervise/employee/' + employee_id
+            response = requests.get(url=url, headers=self.__headers, )
+            return response.json()
+        except requests.RequestException as ex:
+            self.log.error(
+                "Unable to send post request to DEPUTY",
+                exc_info=ex)
+
     def _get_area_for_employee(self, employee_id):
-        url = self.__url + 'supervise/employee/' + employee_id
-        response = requests.get(url=url, headers=self.__headers, )
-        area_id = str(response.json()["Company"])
+        response = self._get_request_employee(employee_id)
+        area_id = str(response["Company"])
         title = compare_mapping(area_id, "area")
         if title is False:
             return False
