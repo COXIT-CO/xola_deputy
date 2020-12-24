@@ -1,9 +1,8 @@
 """Google class for process data from deputy and post data to google sheets"""
-import configparser
 from datetime import datetime
 
 from spreadsheet_api import SpreadsheetAPI
-from global_config import compare_mapping, CONFIG_FILE_NAME
+from global_config import compare_mapping, config
 
 START_TIME = " 6:00"  # start time in google sheets
 END_TIME = " 23:30"  # end time in google sheets
@@ -15,16 +14,17 @@ DAYS = 30
 
 class GoogleSheetsClient():
     """This is mediator class, where process data and post to google sheets"""
+    __spreadsheet_id = ""
+    sheets_api = ""
 
     def __init__(self, deputy, logger):
         self.deputy = deputy
         self.logger = logger
 
     def init_settings(self):
-        config = configparser.ConfigParser()
-        config.read(CONFIG_FILE_NAME)
-        self.spreadsheet_id = config['GOOGLE']['spreadsheet_id']
-        self.sheets_api = SpreadsheetAPI(self.spreadsheet_id)
+        """Parser the Settings.ini file, and get parameters for google sheets connection"""
+        self.__spreadsheet_id = config['GOOGLE']['spreadsheet_id']
+        self.sheets_api = SpreadsheetAPI(self.__spreadsheet_id)
 
     def change_sheets(self, count_of_days, id_location):
         """
@@ -64,7 +64,8 @@ class GoogleSheetsClient():
         :param end_time: unix time end changed
         :param title: title of list in google sheets
         """
-        self.sheets_api.change_multiple_ranges_by_value(title,start_time,end_time,-1)
+        self.sheets_api.change_multiple_ranges_by_value(
+            title, start_time, end_time, -1)
 
     def change_all_spread(self):
         """

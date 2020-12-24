@@ -91,7 +91,7 @@ def test_take_guide_id():
 def test_post_guides_for_event():
     status_codes = [(200, False), (409, False), (201, True)]
     for status_code in status_codes:
-        with patch.object(XolaClient, 'post_guides_for_event', return_value=status_code[0]):
+        with patch.object(XolaClient, '_post_guides_for_event', return_value=status_code[0]):
             with patch.object(XolaClient, 'take_guide_id', return_value=True):
                 result = xola.verification_guides_for_event('Adam Brodner')
                 assert result == status_code[1]

@@ -1,12 +1,12 @@
 """"Have class XolaCLient,which connect to Xola API and get/post data from here.
     Also process data from xola-webhook for parameters to deputy post request"""
-import configparser
+#import configparser
 from datetime import datetime
 from math import ceil
 import json
 import requests
 
-from global_config import compare_mapping, CONFIG_FILE_NAME
+from global_config import compare_mapping, config
 
 HTTP_CREATED = 201
 HTTP_CONFLICT = 409
@@ -15,29 +15,31 @@ HTTP_CONFLICT = 409
 class XolaClient():
     """connect to XOLA API"""
     __url = "https://xola.com/api/"
-    _event_id = ""
-    _seller_id = ""
+    _event_id, __headers = "", ""
+    _seller_id, __public_url = "", ""
+    __x_api_key, __user_id = "", ""
 
     def __init__(self, logger):
         self.log = logger
 
     def init_settings(self):
-        config = configparser.ConfigParser()
-        config.read(CONFIG_FILE_NAME)
+        """Parser the Settings.ini file, and get parameters for xola api connection"""
+        #config = configparser.ConfigParser()
+        #config.read(CONFIG_FILE_NAME)
         self.__x_api_key, self.__user_id = config['XOLA']['x_api_key'], config['XOLA']['user_id']
-        self.public_url = config['URL']['public_url']
+        self.__public_url = config['URL']['public_url']
         self.__headers = {
             'X-API-KEY': self.__x_api_key,
         }
 
-    def post_request_subscribe_to_webhook(self,event_name):
+    def post_request_subscribe_to_webhook(self, event_name):
         """
         make post request to subscribe hook
         :param event_name:
         :return:
         """
         url = self.__url + "users/" + self.__user_id + "/hooks"
-        param = {"eventName": event_name, "url": self.public_url + "/xola"}
+        param = {"eventName": event_name, "url": self.__public_url + "/xola"}
         json_mylist = json.dumps(param)
         data = f"{json_mylist}"
         try:
@@ -165,7 +167,7 @@ class XolaClient():
             return False
         return guide_id
 
-    def post_guides_for_event(self,guide_id):
+    def _post_guides_for_event(self, guide_id):
         url = self.__url + "events/" + self._event_id + "/guides"
         param = {"id": {"id": guide_id}}
         json_mylist = json.dumps(param)
@@ -186,7 +188,7 @@ class XolaClient():
         guide_id = self.take_guide_id(name_of_employee)
         if guide_id is False:
             return False
-        status_code = self.post_guides_for_event(guide_id)
+        status_code = self._post_guides_for_event(guide_id)
         if status_code != HTTP_CREATED:
             self.log.error("Can not assigned guides ")
             return False
@@ -196,8 +198,6 @@ class XolaClient():
             return False
         self.log.info("Update successfully sent to XOLA")
         return True
-
-
 
     @staticmethod
     def calculation_of_employee(shift_count, ticket_count):

@@ -8,12 +8,14 @@ from global_config import CONFIG_FILE_NAME, LOG_CONFIG
 
 DEFAULT_NAME_FLASK_LOGGER = 'werkzeuq'
 
+
 class LoggerClient():
     """Create logger object"""
     logger = logging.getLogger()
     logmode = "console"
 
     def settings_init(self):
+        """Parser the Settings.ini file, and get parameters for logger"""
         config_console = configparser.ConfigParser()
         config_console.read(CONFIG_FILE_NAME)
         self.logmode = config_console["LOG"]["log_mode"]

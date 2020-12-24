@@ -1,10 +1,9 @@
 """"`Have class DeputyCLient,which connect to deputy API and get/post data from here"""
 import json
-import configparser
 from collections import Counter
 
 import requests
-from global_config import compare_mapping, CONFIG_FILE_NAME
+from global_config import compare_mapping, config
 
 HTTP_SUCCESS = 200
 
@@ -13,22 +12,22 @@ class DeputyClient():
     """"Connect to Deputy API"""
     __headers = {}
     __url = ""
+    __public_url = ""
 
     def __init__(self, logger):
         self.log = logger
 
     def init_settings(self):
-        config = configparser.ConfigParser()
-        config.read(CONFIG_FILE_NAME)
+        """Parser the Settings.ini file, and get parameters for deputy api connection"""
         deputy_access_token, deputy_id = config["DEPUTY"]["deputy_access_token"], \
-                                         config["DEPUTY"]["deputy_id"]
+            config["DEPUTY"]["deputy_id"]
         self.__headers = {
             'Authorization': 'OAuth ' + deputy_access_token,
         }
         self.__url = 'https://' + deputy_id + '/api/v1/'
-        self.public_url = config['URL']['public_url']
+        self.__public_url = config['URL']['public_url']
 
-    def _post_new_shift(self,params_for_deputy):
+    def _post_new_shift(self, params_for_deputy):
         data = self.update_params_for_post_deputy_style(params_for_deputy)
         url = self.__url + 'supervise/roster/'
         try:
@@ -71,7 +70,7 @@ class DeputyClient():
         unavailable_employee = []
         unavailable_time = []
         try:
-            response = self._get_people_unavailability(date,id_location)
+            response = self._get_people_unavailability(date, id_location)
             for shift in response:
                 unavailable_time.append([shift["StartTime"], shift["EndTime"]])
                 if shift["_DPMetaData"]["EmployeeInfo"]:
@@ -82,7 +81,7 @@ class DeputyClient():
             self.log.error("Bad JSON data")
             return False
 
-    def _get_recomendation(self,shift_id):
+    def _get_recomendation(self, shift_id):
         url = self.__url + 'supervise/getrecommendation/' + shift_id
         try:
             response = requests.get(url=url, headers=self.__headers, )
@@ -101,6 +100,11 @@ class DeputyClient():
             response = self._get_recomendation(shift_id)
 
             free_employee = list(response["trained"])
+            unavilability_employee = list(response["unavailable"])
+            free_employee = list(
+                set(free_employee) -
+                set(unavilability_employee))
+
             if not unavi_employee:  # check if we have all employee free
                 return free_employee[0]
 
@@ -110,7 +114,7 @@ class DeputyClient():
                 return self.check_all_job_employee(unavi_employee)
             return employees[0]
 
-        except (TypeError,IndexError):
+        except (TypeError, IndexError):
             self.log.warning("Not Available employee")
             return False
 
@@ -173,7 +177,7 @@ class DeputyClient():
             "Topic": topic,
             "Enabled": 1,
             "Type": "URL",
-            "Address": self.public_url + address
+            "Address": self.__public_url + address
         }
         url = self.__url + 'resource/Webhook'
         data = self.update_params_for_post_deputy_style(params_for_webhooks)
@@ -200,7 +204,7 @@ class DeputyClient():
                 return False
         return True
 
-    def _verification_webhooks(self,data_for_webhooks):
+    def _verification_webhooks(self, data_for_webhooks):
         """
         make verification , if user already subscribe to webhooks
         :param data_for_webhooks: list of tuple with topic webhook
@@ -226,7 +230,7 @@ class DeputyClient():
                 count += 1
         return count
 
-    def _get_request_employee(self,employee_id):
+    def _get_request_employee(self, employee_id):
         try:
             url = self.__url + 'supervise/employee/' + employee_id
             response = requests.get(url=url, headers=self.__headers, )
