@@ -112,13 +112,13 @@ class GoogleSheetsClient():
         :param time: unix time
         :param key: if wonna add cell = True, if minus cell =False
         """
-        mod = time % 1800
+        mod = time % DELAY
         time = time - mod
         if mod != 0:
             if key:
-                time += 1800
+                time += DELAY
             else:
-                time -= 1800
+                time -= DELAY
         return time
 
     @staticmethod
