@@ -114,7 +114,6 @@ def deputy_unvial():
 
 
 if __name__ == '__main__':
-
     if xola.subscribe_to_webhook() is False:
         logging.warning("Can not subscribe to webhook")
     deputy.subscribe_to_webhooks()

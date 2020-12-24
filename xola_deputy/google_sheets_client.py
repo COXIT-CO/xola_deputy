@@ -64,6 +64,9 @@ class GoogleSheetsClient():
         :param end_time: unix time end changed
         :param title: title of list in google sheets
         """
+        start_time = self._convert_for_30_minutes(start_time, False)
+        end_time = self._convert_for_30_minutes(end_time)
+
         self.sheets_api.change_multiple_ranges_by_value(
             title, start_time, end_time, -1)
 
@@ -99,6 +102,24 @@ class GoogleSheetsClient():
         for lists in all_settings_sheets:
             title_of_all_lists.append(lists['properties']['title'])
         return title_of_all_lists
+
+    @staticmethod
+    def _convert_for_30_minutes(time, key=True):
+        """
+        User google sheets list have 30 minutes cells,so
+        if shift start not in :00 or :30 we modification this
+        (e.g start shift in 13:32 , modification = 13:30)
+        :param time: unix time
+        :param key: if wonna add cell = True, if minus cell =False
+        """
+        mod = time % 1800
+        time = time - mod
+        if mod != 0:
+            if key:
+                time += 1800
+            else:
+                time -= 1800
+        return time
 
     @staticmethod
     def calculation_unavailability_count(time_of_shits, list_of_free_employee):

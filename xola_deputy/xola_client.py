@@ -25,7 +25,7 @@ class XolaClient():
     def init_settings(self):
         """Parser the Settings.ini file, and get parameters for xola api connection"""
         #config = configparser.ConfigParser()
-        #config.read(CONFIG_FILE_NAME)
+        # config.read(CONFIG_FILE_NAME)
         self.__x_api_key, self.__user_id = config['XOLA']['x_api_key'], config['XOLA']['user_id']
         self.__public_url = config['URL']['public_url']
         self.__headers = {
