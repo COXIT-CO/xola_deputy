@@ -44,7 +44,9 @@ class XolaClient():
                 url=url, headers=self.__headers, data=data)
             return response.status_code
         except requests.RequestException as ex:
-            self.log.error("Unable to send post request to XOLA", exc_info=ex)
+            self.log.error(
+                "Unable to send post request to XOLA",
+                exc_info=ex)
 
     def subscribe_to_webhook(self, event_name="order.create"):
         """do post request to xola api: subscribe to weebhook(order.created)
@@ -74,7 +76,9 @@ class XolaClient():
                 url=url, headers=self.__headers)
             return response.json()
         except requests.RequestException as ex:
-            self.log.error("Unable to send get request to XOLA", exc_info=ex)
+            self.log.error(
+                "Unable to send get request to XOLA",
+                exc_info=ex)
 
     def take_params_from_responce(self, request):
         """Take data from json event request, and process them

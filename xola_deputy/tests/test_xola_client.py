@@ -1,8 +1,8 @@
-import json
 import pytest
-from requests.models import Response
-
+import json
+import requests
 from unittest.mock import patch, Mock
+
 from xola_deputy.xola_client import XolaClient
 from xola_deputy.logger import LoggerClient
 
@@ -67,14 +67,14 @@ def test_start(get_order_json):
 
 def test_get_list_of_guids(get_guide_json):
     with patch.object(XolaClient, '_get_request_list_guides') as mock_func:
-        the_response = Mock(spec=Response)
+        the_response = Mock(spec=requests.models.Response)
         the_response.json.return_value = get_guide_json
         the_response.status_code = 400
         mock_func.return_value = the_response
         assert xola.get_list_of_guids() == False
 
     with patch.object(XolaClient, '_get_request_list_guides', ) as mock_func:
-        the_response = Mock(spec=Response)
+        the_response = Mock(spec=requests.models.Response)
         the_response.json.return_value = get_guide_json
         the_response.status_code = 200
         mock_func.return_value = the_response
@@ -88,7 +88,7 @@ def test_take_guide_id():
         assert type(xola.take_guide_id('Maaiz - GM Test')) == str
         assert xola.take_guide_id('Maria Test') == False
 
-def test_post_guides_for_event():
+def test_verification_guides_for_event():
     status_codes = [(200, False), (409, False), (201, True)]
     for status_code in status_codes:
         with patch.object(XolaClient, '_post_guides_for_event', return_value=status_code[0]):
@@ -97,4 +97,22 @@ def test_post_guides_for_event():
                 assert result == status_code[1]
 
 
+@patch('requests.post')
+def test_post_request_subscribe_to_webhook(post_mock):
+    post_mock.side_effect = requests.RequestException
+    xola.post_request_subscribe_to_webhook("order")
 
+@patch('requests.get')
+def test__get_data_from_event(post_mock):
+    post_mock.side_effect = requests.RequestException
+    xola._get_data_from_event()
+
+@patch('requests.get')
+def test_get_request_list_guides(post_mock):
+    post_mock.side_effect = requests.RequestException
+    xola._get_request_list_guides()
+
+@patch('requests.post')
+def test_post_guides_for_event(post_mock):
+    post_mock.side_effect = requests.RequestException
+    xola._post_guides_for_event("1")

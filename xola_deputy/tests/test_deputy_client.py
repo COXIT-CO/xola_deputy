@@ -1,5 +1,6 @@
 import pytest
 import json
+import requests
 from unittest.mock import patch
 
 from xola_deputy.deputy_client import DeputyClient
@@ -123,8 +124,46 @@ def test_get_area_for_employee(get_employee_json):
         mock_func.return_value = get_employee_json
         assert deputy._get_area_for_employee("1")
 
+@pytest.mark.xfail(raises=requests.RequestException)
+def test_post_new_shift():
+    params = {
+        "intStartTimestamp": 1234,
+        "intEndTimestamp": 1243,
+        "intOpunitId": 3,
+    }
+    deputy._post_new_shift(params)
 
+@pytest.mark.xfail(raises=requests.RequestException)
+def test_get_people_unavailability():
+    deputy._get_people_unavailability("2020-12-12","1")
 
+@pytest.mark.xfail(raises=requests.RequestException)
+def test_get_recomendation():
+    deputy._get_recomendation("1")
+
+@pytest.mark.xfail(raises=requests.RequestException)
+def test_get_employee_name():
+    deputy.get_employee_name("1")
+
+@pytest.mark.xfail(raises=requests.RequestException)
+def test_get_request_for_employee_unvail():
+    deputy._get_request_for_employee_unvail()
+
+@pytest.mark.xfail(raises=requests.RequestException)
+def test_get_request_employee():
+    deputy._get_request_employee("1")
+
+@pytest.mark.xfail(raises=requests.RequestException)
+def test_verification_webhooks():
+    deputy._verification_webhooks("1")
+
+@pytest.mark.xfail(raises=requests.RequestException)
+def test_post_params_for_webhook():
+    deputy.post_params_for_webhook("Aliens", "url")
+
+@pytest.mark.xfail(raises=requests.RequestException)
+def test_get_number_of_employee():
+    deputy.get_number_of_employee("1")
 
 
 

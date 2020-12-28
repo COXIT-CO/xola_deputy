@@ -181,8 +181,13 @@ class DeputyClient():
         }
         url = self.__url + 'resource/Webhook'
         data = self.update_params_for_post_deputy_style(params_for_webhooks)
-        response = requests.post(url=url, headers=self.__headers, data=data)
-        return response.status_code
+        try:
+            response = requests.post(url=url, headers=self.__headers, data=data)
+            return response.status_code
+        except requests.RequestException as ex:
+            self.log.error(
+                "Unable to send post request to DEPUTY",
+                exc_info=ex)
 
     def subscribe_to_webhooks(self):
         """
@@ -211,24 +216,34 @@ class DeputyClient():
         :return: bool, false already subscribe , true make post request
         """
         url = self.__url + 'resource/Webhook'
-        response = requests.get(url=url, headers=self.__headers, )
-        for webhook in response.json():
-            for data in data_for_webhooks:
-                if webhook["Topic"] == data[0]:
-                    return False
-        return True
+        try:
+            response = requests.get(url=url, headers=self.__headers, )
+            for webhook in response.json():
+                for data in data_for_webhooks:
+                    if webhook["Topic"] == data[0]:
+                        return False
+            return True
+        except requests.RequestException as ex:
+            self.log.error(
+                "Unable to send post request to DEPUTY",
+                exc_info=ex)
 
     def get_number_of_employee(self, id_location):
         """make GET request to DEPUTY,for all employee
         :return: count of employee
         """
         url = self.__url + 'supervise/employee'
-        response = requests.get(url=url, headers=self.__headers, )
-        count = 0
-        for employee in response.json():
-            if employee["Company"] == int(id_location):
-                count += 1
-        return count
+        try:
+            response = requests.get(url=url, headers=self.__headers, )
+            count = 0
+            for employee in response.json():
+                if employee["Company"] == int(id_location):
+                    count += 1
+            return count
+        except requests.RequestException as ex:
+            self.log.error(
+                "Unable to send post request to DEPUTY",
+                exc_info=ex)
 
     def _get_request_employee(self, employee_id):
         try:
