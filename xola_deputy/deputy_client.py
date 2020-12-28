@@ -1,4 +1,4 @@
-""""`Have class DeputyCLient,which connect to deputy API and get/post data from here"""
+"""Have class DeputyCLient,which connect to deputy API and get/post data from here"""
 import json
 from collections import Counter
 
@@ -18,7 +18,10 @@ class DeputyClient():
         self.log = logger
 
     def init_settings(self):
-        """Parser the Settings.ini file, and get parameters for deputy api connection"""
+        """
+        Parser the Settings.ini file, and get parameters for deputy api connection like tokens.
+        Assign getting value to class variables
+        """
         deputy_access_token, deputy_id = config["DEPUTY"]["deputy_access_token"], \
             config["DEPUTY"]["deputy_id"]
         self.__headers = {
@@ -28,6 +31,12 @@ class DeputyClient():
         self.__public_url = config['URL']['public_url']
 
     def _post_new_shift(self, params_for_deputy):
+        """
+        Make post request to deputy roster ,with specific params, which we take from arguments.
+        If response will be successful, return data in json format from response.
+        :param params_for_deputy: parameters to post request
+        :return: json response
+        """
         data = self.update_params_for_post_deputy_style(params_for_deputy)
         url = self.__url + 'supervise/roster/'
         try:
@@ -40,9 +49,12 @@ class DeputyClient():
                 exc_info=ex)
 
     def process_data_from_new_shift(self, params_for_deputy=None):
-        """post a new shift
-        :param params_for_deputy: data to post request
-        :return: str. id shift, and correct date
+        """
+        Make request, get data in json format.
+        Process data, and return id new shift witch we created, and
+        date this shift in format "year-month-day"
+        :param params_for_deputy: parameters to post request
+        :return: id new shift, date new shift
         """
         try:
             response = self._post_new_shift(params_for_deputy)
@@ -53,6 +65,13 @@ class DeputyClient():
             return False, False
 
     def _get_people_unavailability(self, date, id_location):
+        """
+        Make get request to deputy roster ,with specific params, which we take from arguments.
+        If response will be successful, return data in json format from response.
+        :param date: date in format "year-month-day" where find all shift
+        :param id_location: id location where find shifts
+        :return: json response
+        """
         url = self.__url + 'supervise/roster/' + date + "/" + id_location
         try:
             response = requests.get(url=url, headers=self.__headers, )
@@ -63,9 +82,12 @@ class DeputyClient():
                 exc_info=ex)
 
     def process_people_unavailability(self, date, id_location):
-        """MAke post request , take all shifts,and search which people have a work
-        :param data: in which data we looking for shift
-        :return: list of unavailable employee
+        """
+        Make get request . Process data from response, get time of all shift,
+        and employee who work on this shift
+        :param date: date in format "year-month-day" where find all shift
+        :param id_location: id location where find shifts
+        :return: list of id employee,who have shift , list of tuple with shift time
         """
         unavailable_employee = []
         unavailable_time = []
@@ -82,6 +104,12 @@ class DeputyClient():
             return False
 
     def _get_recomendation(self, shift_id):
+        """
+        Make get request to deputy roster ,with specific params, which we take from arguments.
+        If response will be successful, return data in json format from response.
+        :param shift_id: id empty shift
+        :return: json response
+        """
         url = self.__url + 'supervise/getrecommendation/' + shift_id
         try:
             response = requests.get(url=url, headers=self.__headers, )
@@ -92,8 +120,14 @@ class DeputyClient():
                 exc_info=ex)
 
     def get_people_availability(self, shift_id, unavi_employee):
-        """Take id employee,which can work in taken shift
-        :param shift_id: id shift ,which have not employee
+        """
+        Make request,which return recommendation about employee and shift.
+        Then we process data and get ids recommendation employee,
+        and exclude ids unavailability employee(day-off). From arguments take list of
+        unavailability employee( have a shift ) . We compare which employee
+        have a less work and return his id.
+        :param shift_id: id empty shift
+        :param unavi_employee: list of ids employee who have shift
         :return: id free employeee
         """
         try:
@@ -120,9 +154,11 @@ class DeputyClient():
 
     def get_employee_name(self, id_employee):
         """
-        make get request to deputy,take employee name
-        :param employee_id:
-        :return: name of employee
+        Make get request to deputy roster ,with specific params, which we take from arguments.
+        If response will be successful, return data in json format from response.Process data
+        and return Name of employee, and status code requests
+        :param id_employee: id employee, we wanna get name
+        :return: name of employee , status code
         """
         url = self.__url + 'supervise/employee/' + id_employee
         try:
@@ -138,6 +174,11 @@ class DeputyClient():
             return False
 
     def _get_request_for_employee_unvail(self):
+        """
+        Make get request to deputy roster to take data about employee who assigned day off
+        If response will be successful, return data in json format from response.
+        :return: json response
+        """
         url = self.__url + 'supervise/unavail/'
         try:
             response = requests.get(url=url, headers=self.__headers, )
@@ -149,8 +190,9 @@ class DeputyClient():
 
     def get_employee_unavail(self):
         """
-         make get request to deputy,take employee unavailability
-        :return: when employee have unavailability
+        Process data from request.Get time of day-off, and compare if employee with
+        area where his work
+        :return: list with employee have unavailability
         """
         response = self._get_request_for_employee_unvail()
         if not response:
@@ -246,6 +288,11 @@ class DeputyClient():
                 exc_info=ex)
 
     def _get_request_employee(self, employee_id):
+        """
+        make GET request to DEPUTY,for get info about employee
+        :param employee_id:
+        :return: count of employee
+        """
         try:
             url = self.__url + 'supervise/employee/' + employee_id
             response = requests.get(url=url, headers=self.__headers, )
@@ -256,6 +303,10 @@ class DeputyClient():
                 exc_info=ex)
 
     def _get_area_for_employee(self, employee_id):
+        """
+        Make get request to deputy roster.
+        Compare id location with title for google sheets
+        """
         response = self._get_request_employee(employee_id)
         area_id = str(response["Company"])
         title = compare_mapping(area_id, "area")

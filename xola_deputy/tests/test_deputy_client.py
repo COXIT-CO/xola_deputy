@@ -1,3 +1,5 @@
+"""File with test for deputy_client file and class DeputyClient """
+
 import pytest
 import json
 import requests
@@ -11,35 +13,59 @@ deputy = DeputyClient(logging)
 
 @pytest.fixture()
 def get_shift_json():
+    """
+    Take testing data from json file,with structure like real request.
+    This function return json with structure post request to deputy
+    """
     with open("tests/data_from_post_new_shift_deputy.json", "r") as file:
         request = json.load(file)
     return request
 
 @pytest.fixture()
 def get_unvial_json():
+    """
+    Take testing data from json file,with structure like real request.
+    This function return json with structure get request to deputy
+    """
     with open("tests/data_from_unvial_deputy.json", "r") as file:
         request = json.load(file)
     return request
 
 @pytest.fixture()
 def get_recomendation_json():
+    """
+    Take testing data from json file,with structure like real request.
+    This function return json with structure get request to deputy
+    """
     with open("tests/data_recomendation_deputy.json", "r") as file:
         request = json.load(file)
     return request
 
 @pytest.fixture()
 def get_dayoff_json():
+    """
+    Take testing data from json file,with structure like real request.
+    This function return json with structure get request to deputy
+    """
     with open("tests/data_unvial_employee_deputy.json", "r") as file:
         request = json.load(file)
     return request
 
 @pytest.fixture()
 def get_employee_json():
+    """
+    Take testing data from json file,with structure like real request.
+    This function return json with structure get request to deputy
+    """
     with open("tests/data_emplloyee_info_deputy.json", "r") as file:
         request = json.load(file)
     return request
 
 def test_process_data_from_new_shift(get_shift_json):
+    """
+    Test, where we use mock for deputy func _post_new_shift,
+    and fixture for return data from this post request
+    """
     with patch.object(DeputyClient, '_post_new_shift') as mock_func:
         mock_func.return_value = get_shift_json
         params = {
@@ -58,6 +84,10 @@ def test_process_data_from_new_shift(get_shift_json):
         assert deputy.process_data_from_new_shift(params)
 
 def test_process_people_unavailability(get_unvial_json):
+    """
+    Test, where we use mock for deputy func _get_people_unavailability,
+    and fixture for return data from this post request
+    """
     with patch.object(DeputyClient, '_get_people_unavailability') as mock_func:
         mock_func.return_value = get_unvial_json
         assert deputy.process_people_unavailability("2020-12-17","1")
@@ -66,6 +96,10 @@ def test_process_people_unavailability(get_unvial_json):
         assert deputy.process_people_unavailability("2020-12-17", "1") == False
 
 def test_get_people_availability(get_recomendation_json):
+    """
+    Test, where we use mock for deputy func _get_recomendation,
+    and fixture for return data from this post request
+    """
     with patch.object(DeputyClient, '_get_recomendation') as mock_func:
         mock_func.return_value = get_recomendation_json
         test_unvi = []
@@ -85,15 +119,26 @@ def test_get_people_availability(get_recomendation_json):
         assert deputy.get_people_availability("49", test_unvi) == False
 
 def test_check_all_job_employee():
+    """
+    Test, where we have testing list with value,
+    and check if our function work good
+    """
     unavailable_employee = [1,2,2,3,4,5,6,3,4,5,6,7]
     assert deputy.check_all_job_employee(unavailable_employee) == 7
 
 def test_update_params_for_post_deputy_style():
+    """
+    Test, with testing dict check if our function work good
+    """
     test_param={"test":1}
     data = deputy.update_params_for_post_deputy_style(test_param)
     assert type(data) == str
 
 def test_get_employee_unavail(get_dayoff_json):
+    """
+    Test, where we use mock for deputy func _get_request_for_employee_unvail,
+    and fixture for return data from this request
+    """
     with patch.object(DeputyClient, '_get_request_for_employee_unvail') as mock_func:
         mock_func.return_value = []
         assert deputy.get_employee_unavail() == False
