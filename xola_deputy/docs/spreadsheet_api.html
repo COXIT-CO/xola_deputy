@@ -1,0 +1,212 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module spreadsheet_api</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>spreadsheet_api</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/bear/Documents/workspace/xola_deputy/xola_deputy/spreadsheet_api.py">/Users/bear/Documents/workspace/xola_deputy/xola_deputy/spreadsheet_api.py</a></font></td></tr></table>
+    <p><tt>This&nbsp;module&nbsp;describe&nbsp;class&nbsp;for&nbsp;working&nbsp;with&nbsp;Spreadsheet&nbsp;API</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="os.html">os</a><br>
+</td><td width="25%" valign=top><a href="pickle.html">pickle</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="spreadsheet_api.html#SpreadsheetAPI">SpreadsheetAPI</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="SpreadsheetAPI">class <strong>SpreadsheetAPI</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#SpreadsheetAPI">SpreadsheetAPI</a>(spreadsheet_id)<br>
+&nbsp;<br>
+A&nbsp;class&nbsp;used&nbsp;for&nbsp;work&nbsp;with&nbsp;google&nbsp;spreadsheet<br>
+&nbsp;<br>
+...<br>
+&nbsp;<br>
+Attributes<br>
+----------<br>
+spreadsheet_id&nbsp;:&nbsp;str<br>
+&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;of&nbsp;google&nbsp;spreadsheet&nbsp;with&nbsp;which&nbsp;we&nbsp;will&nbsp;work<br>
+&nbsp;<br>
+spreadsheet__service&nbsp;:&nbsp;googleapiclient.discovery.Resource<br>
+&nbsp;&nbsp;&nbsp;&nbsp;google&nbsp;spreadsheet&nbsp;<a href="builtins.html#object">object</a><br>
+&nbsp;<br>
+Methods<br>
+-------<br>
+<a href="#SpreadsheetAPI-get_availability">get_availability</a>(sheet_title,&nbsp;date)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Get&nbsp;title&nbsp;of&nbsp;sheet&nbsp;in&nbsp;google&nbsp;spreadsheet&nbsp;and&nbsp;date&nbsp;(year,&nbsp;month,&nbsp;day,&nbsp;hour,&nbsp;minutes)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;in&nbsp;unix&nbsp;format<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Return&nbsp;value&nbsp;from&nbsp;appropriate&nbsp;cell<br>
+&nbsp;<br>
+<a href="#SpreadsheetAPI-change_availability">change_availability</a>(self,&nbsp;sheet_title,&nbsp;date,&nbsp;value)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Change&nbsp;value&nbsp;in&nbsp;appropriate&nbsp;cell<br>
+&nbsp;<br>
+<a href="#SpreadsheetAPI-add_sheet">add_sheet</a>(title)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;create&nbsp;new&nbsp;sheet&nbsp;with&nbsp;provided&nbsp;title<br>
+&nbsp;<br>
+<a href="#SpreadsheetAPI-get_sheet_by_title">get_sheet_by_title</a>(title)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;sheet&nbsp;<a href="builtins.html#object">object</a><br>
+&nbsp;<br>
+_get_cell_indexes_by_timestamp(date)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;convert&nbsp;date&nbsp;to&nbsp;str&nbsp;format&nbsp;and&nbsp;looking&nbsp;for&nbsp;index&nbsp;of&nbsp;cell&nbsp;in&nbsp;spreadsheet<br>
+&nbsp;<br>
+_create_range_name(sheet_title,&nbsp;row_id,&nbsp;column_id)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;create&nbsp;range&nbsp;name&nbsp;which&nbsp;using&nbsp;in&nbsp;google&nbsp;api<br>
+&nbsp;<br>
+_read_date(range_name)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Read&nbsp;data&nbsp;from&nbsp;spreadsheet&nbsp;using&nbsp;range&nbsp;name<br>
+&nbsp;<br>
+_update_date(range_name,&nbsp;value)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Update&nbsp;value&nbsp;in&nbsp;cell&nbsp;of&nbsp;spreadsheet&nbsp;using&nbsp;range&nbsp;name<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="SpreadsheetAPI-__init__"><strong>__init__</strong></a>(self, spreadsheet_id)</dt><dd><tt>Parameters<br>
+----------<br>
+spreadsheet_id&nbsp;:&nbsp;str<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Id&nbsp;of&nbsp;google&nbsp;spreadsheet<br>
+&nbsp;<br>
+----------<br>
+&nbsp;<br>
+Init&nbsp;function&nbsp;looking&nbsp;for&nbsp;token&nbsp;with&nbsp;TOKEN_PATH,<br>
+if&nbsp;token&nbsp;doesn't&nbsp;exist&nbsp;or&nbsp;expired&nbsp;-&nbsp;user&nbsp;need&nbsp;to&nbsp;authenticate&nbsp;in&nbsp;google&nbsp;services<br>
+after&nbsp;it&nbsp;function&nbsp;create&nbsp;google&nbsp;spreadsheet&nbsp;<a href="builtins.html#object">object</a>,&nbsp;using&nbsp;provided&nbsp;id&nbsp;and&nbsp;save&nbsp;it</tt></dd></dl>
+
+<dl><dt><a name="SpreadsheetAPI-add_sheet"><strong>add_sheet</strong></a>(self, title)</dt><dd><tt>Parameters<br>
+----------<br>
+title&nbsp;:&nbsp;str<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Title&nbsp;of&nbsp;sheet<br>
+&nbsp;<br>
+----------<br>
+&nbsp;<br>
+Try&nbsp;to&nbsp;add&nbsp;new&nbsp;sheet&nbsp;to&nbsp;the&nbsp;spreadsheet<br>
+Return&nbsp;new&nbsp;sheet&nbsp;<a href="builtins.html#object">object</a>&nbsp;if&nbsp;sheet&nbsp;was&nbsp;added&nbsp;or&nbsp;None&nbsp;if&nbsp;this&nbsp;sheet&nbsp;is&nbsp;exist</tt></dd></dl>
+
+<dl><dt><a name="SpreadsheetAPI-change_availability"><strong>change_availability</strong></a>(self, sheet_title, date, value)</dt><dd><tt>Parameters<br>
+----------<br>
+sheet_title&nbsp;:&nbsp;str<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Title&nbsp;of&nbsp;sheet<br>
+date&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;Date&nbsp;in&nbsp;unix&nbsp;format<br>
+value&nbsp;:&nbsp;str<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Value&nbsp;which&nbsp;will&nbsp;be&nbsp;insert&nbsp;into&nbsp;sheet<br>
+&nbsp;<br>
+----------<br>
+&nbsp;<br>
+Function&nbsp;looking&nbsp;for&nbsp;cell&nbsp;in&nbsp;sheet&nbsp;and&nbsp;insert&nbsp;new&nbsp;value&nbsp;to&nbsp;this&nbsp;cell<br>
+Return&nbsp;value&nbsp;of&nbsp;cell&nbsp;if&nbsp;date&nbsp;is&nbsp;valid,&nbsp;in&nbsp;another&nbsp;case&nbsp;-&nbsp;return&nbsp;None</tt></dd></dl>
+
+<dl><dt><a name="SpreadsheetAPI-change_availability_by_value"><strong>change_availability_by_value</strong></a>(self, sheet_title, date, value)</dt><dd><tt>Parameters<br>
+----------<br>
+sheet_title&nbsp;:&nbsp;str<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Title&nbsp;of&nbsp;sheet<br>
+date&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;Date&nbsp;in&nbsp;unix&nbsp;format<br>
+value&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Change&nbsp;current&nbsp;value&nbsp;by&nbsp;this&nbsp;value<br>
+&nbsp;<br>
+----------<br>
+&nbsp;<br>
+Function&nbsp;looking&nbsp;for&nbsp;cell&nbsp;in&nbsp;sheet&nbsp;and&nbsp;change&nbsp;it&nbsp;by&nbsp;new&nbsp;value<br>
+Return&nbsp;value&nbsp;of&nbsp;cell&nbsp;if&nbsp;date&nbsp;is&nbsp;valid,&nbsp;in&nbsp;another&nbsp;case&nbsp;-&nbsp;return&nbsp;None</tt></dd></dl>
+
+<dl><dt><a name="SpreadsheetAPI-change_availability_multiple_ranges"><strong>change_availability_multiple_ranges</strong></a>(self, sheet_title, data_list)</dt><dd><tt>Parameters<br>
+----------<br>
+sheet_title&nbsp;:&nbsp;str<br>
+&nbsp;&nbsp;Title&nbsp;of&nbsp;sheet<br>
+data_list:&nbsp;list<br>
+&nbsp;&nbsp;&nbsp;&nbsp;List&nbsp;contains&nbsp;tuples&nbsp;with&nbsp;date&nbsp;and&nbsp;value&nbsp;for&nbsp;cell<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Example:&nbsp;[[1607414400,&nbsp;1],&nbsp;[1607416200,&nbsp;2]]<br>
+----------<br>
+&nbsp;<br>
+Create&nbsp;range&nbsp;names&nbsp;for&nbsp;each&nbsp;time&nbsp;from&nbsp;data_list,<br>
+make&nbsp;request&nbsp;for&nbsp;writing&nbsp;all&nbsp;values&nbsp;to&nbsp;a&nbsp;spreadsheet&nbsp;by&nbsp;their&nbsp;range&nbsp;names</tt></dd></dl>
+
+<dl><dt><a name="SpreadsheetAPI-change_multiple_ranges_by_value"><strong>change_multiple_ranges_by_value</strong></a>(self, sheet_title, time_start, time_end, value)</dt><dd><tt>Parameters<br>
+----------<br>
+sheet_title&nbsp;:&nbsp;str<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Title&nbsp;of&nbsp;sheet<br>
+time_start&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Time&nbsp;of&nbsp;start&nbsp;changing&nbsp;in&nbsp;unix&nbsp;format<br>
+time_end&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Time&nbsp;of&nbsp;end&nbsp;changing&nbsp;in&nbsp;unix&nbsp;format<br>
+value&nbsp;:&nbsp;str<br>
+&nbsp;&nbsp;&nbsp;&nbsp;All&nbsp;cells&nbsp;change&nbsp;by&nbsp;this&nbsp;value<br>
+----------<br>
+&nbsp;<br>
+Change&nbsp;all&nbsp;values&nbsp;in&nbsp;provided&nbsp;sheet&nbsp;from&nbsp;time_start&nbsp;to&nbsp;time_end</tt></dd></dl>
+
+<dl><dt><a name="SpreadsheetAPI-get_availability"><strong>get_availability</strong></a>(self, sheet_title, date)</dt><dd><tt>Parameters<br>
+----------<br>
+sheet_title&nbsp;:&nbsp;str<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Title&nbsp;of&nbsp;sheet<br>
+date&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;Date&nbsp;in&nbsp;unix&nbsp;format<br>
+&nbsp;<br>
+----------<br>
+&nbsp;<br>
+Function&nbsp;takes&nbsp;date&nbsp;in&nbsp;unix&nbsp;format&nbsp;convert&nbsp;it&nbsp;into&nbsp;2&nbsp;string&nbsp;variables<br>
+After&nbsp;it&nbsp;looking&nbsp;for&nbsp;cell&nbsp;in&nbsp;sheet&nbsp;with&nbsp;provided&nbsp;title,&nbsp;using&nbsp;converted&nbsp;date&nbsp;variables<br>
+In&nbsp;the&nbsp;end&nbsp;function&nbsp;return&nbsp;value&nbsp;from&nbsp;cell&nbsp;in&nbsp;sheet<br>
+&nbsp;<br>
+Return&nbsp;value&nbsp;from&nbsp;cell&nbsp;if&nbsp;date&nbsp;is&nbsp;valid,&nbsp;in&nbsp;another&nbsp;case&nbsp;-&nbsp;return&nbsp;None</tt></dd></dl>
+
+<dl><dt><a name="SpreadsheetAPI-get_sheet_by_title"><strong>get_sheet_by_title</strong></a>(self, title)</dt><dd><tt>Parameters<br>
+----------<br>
+title&nbsp;:&nbsp;str<br>
+&nbsp;&nbsp;&nbsp;Title&nbsp;of&nbsp;sheet<br>
+&nbsp;<br>
+----------<br>
+&nbsp;<br>
+Looking&nbsp;for&nbsp;sheet&nbsp;with&nbsp;provided&nbsp;title&nbsp;in&nbsp;the&nbsp;spreadsheet<br>
+If&nbsp;sheet&nbsp;isn't&nbsp;exist&nbsp;-&nbsp;create&nbsp;new&nbsp;sheet&nbsp;with&nbsp;provided&nbsp;title</tt></dd></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>sheets</strong></dt>
+<dd><tt>Property<br>
+Return&nbsp;all&nbsp;sheet&nbsp;objects&nbsp;in&nbsp;spreadsheet</tt></dd>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>CREDENTIALS_PATH</strong> = 'credentials.json'<br>
+<strong>MINUTES_TIME</strong> = 60<br>
+<strong>SCOPES</strong> = ['https://www.googleapis.com/auth/spreadsheets']<br>
+<strong>TOKEN_PATH</strong> = 'token.pickle'</td></tr></table>
+</body></html>
