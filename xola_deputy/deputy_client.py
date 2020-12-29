@@ -1,10 +1,9 @@
-""""`Have class DeputyCLient,which connect to deputy API and get/post data from here"""
+"""Have class DeputyCLient,which connect to deputy API and get/post data from here"""
 import json
-import configparser
 from collections import Counter
 
 import requests
-from global_config import compare_mapping, CONFIG_FILE_NAME
+from global_config import compare_mapping, config
 
 HTTP_SUCCESS = 200
 
@@ -13,75 +12,133 @@ class DeputyClient():
     """"Connect to Deputy API"""
     __headers = {}
     __url = ""
+    __public_url = ""
 
     def __init__(self, logger):
-        config = configparser.ConfigParser()
-        config.read(CONFIG_FILE_NAME)
-        deputy_access_token, deputy_id = config["DEPUTY"]["deputy_access_token"],\
+        self.log = logger
+
+    def init_settings(self):
+        """
+        Parser the Settings.ini file, and get parameters for deputy api connection like tokens.
+        Assign getting value to class variables
+        """
+        deputy_access_token, deputy_id = config["DEPUTY"]["deputy_access_token"], \
             config["DEPUTY"]["deputy_id"]
         self.__headers = {
             'Authorization': 'OAuth ' + deputy_access_token,
         }
         self.__url = 'https://' + deputy_id + '/api/v1/'
-        self.public_url = config['URL']['public_url']
-        self.log = logger
+        self.__public_url = config['URL']['public_url']
 
-    def post_new_shift(self, params_for_deputy):
-        """post a new shift
-        :param params_for_deputy: data to post request
-        :return: str. id shift, and correct date
+    def _post_new_shift(self, params_for_deputy):
+        """
+        Make post request to deputy roster ,with specific params, which we take from arguments.
+        If response will be successful, return data in json format from response.
+        :param params_for_deputy: parameters to post request
+        :return: json response
         """
         data = self.update_params_for_post_deputy_style(params_for_deputy)
         url = self.__url + 'supervise/roster/'
         try:
             response = requests.post(
                 url=url, headers=self.__headers, data=data)
-            return str(response.json()["Id"]), response.json()["Date"]
-        except KeyError as ex:
-            self.log.warning(
-                "Can not find availability employee",)
-            return False, False
+            return response.json()
         except requests.RequestException as ex:
             self.log.error(
                 "Unable to send post request to DEPUTY",
                 exc_info=ex)
 
-    def get_people_unavailability(self, date, id_location):
-        """MAke post request , take all shifts,and search which people have a work
-        :param data: in which data we looking for shift
-        :return: list of unavailable employee
+    def process_data_from_new_shift(self, params_for_deputy=None):
+        """
+        Make request, get data in json format.
+        Process data, and return id new shift witch we created, and
+        date this shift in format "year-month-day"
+        :param params_for_deputy: parameters to post request
+        :return: id new shift, date new shift
+        """
+        try:
+            response = self._post_new_shift(params_for_deputy)
+            return str(response["Id"]), response["Date"]
+        except (TypeError, KeyError):
+            self.log.warning(
+                "Can not find availability employee",)
+            return False, False
+
+    def _get_people_unavailability(self, date, id_location):
+        """
+        Make get request to deputy roster ,with specific params, which we take from arguments.
+        If response will be successful, return data in json format from response.
+        :param date: date in format "year-month-day" where find all shift
+        :param id_location: id location where find shifts
+        :return: json response
         """
         url = self.__url + 'supervise/roster/' + date + "/" + id_location
+        try:
+            response = requests.get(url=url, headers=self.__headers, )
+            return response.json()
+        except requests.RequestException as ex:
+            self.log.error(
+                "Unable to send post request to DEPUTY",
+                exc_info=ex)
+
+    def process_people_unavailability(self, date, id_location):
+        """
+        Make get request . Process data from response, get time of all shift,
+        and employee who work on this shift
+        :param date: date in format "year-month-day" where find all shift
+        :param id_location: id location where find shifts
+        :return: list of id employee,who have shift , list of tuple with shift time
+        """
         unavailable_employee = []
         unavailable_time = []
         try:
-
-            response = requests.get(url=url, headers=self.__headers,)
-            for shift in response.json():
+            response = self._get_people_unavailability(date, id_location)
+            for shift in response:
                 unavailable_time.append([shift["StartTime"], shift["EndTime"]])
                 if shift["_DPMetaData"]["EmployeeInfo"]:
                     unavailable_employee.append(
                         str(shift["_DPMetaData"]["EmployeeInfo"]["Id"]))
             return unavailable_employee, unavailable_time
-
-        except requests.RequestException as ex:
-            self.log.error(
-                "Unable to send post request to DEPUTY",
-                exc_info=ex)
         except (ValueError, TypeError):
             self.log.error("Bad JSON data")
             return False
 
-    def get_people_availability(self, shift_id, unavi_employee):
-        """Take id employee,which can work in taken shift
-        :param shift_id: id shift ,which have not employee
-        :return: id free employeee
+    def _get_recomendation(self, shift_id):
+        """
+        Make get request to deputy roster ,with specific params, which we take from arguments.
+        If response will be successful, return data in json format from response.
+        :param shift_id: id empty shift
+        :return: json response
         """
         url = self.__url + 'supervise/getrecommendation/' + shift_id
         try:
-            response = requests.get(url=url, headers=self.__headers,)
+            response = requests.get(url=url, headers=self.__headers, )
+            return response.json()
+        except requests.RequestException as ex:
+            self.log.error(
+                "Unable to send post request to DEPUTY",
+                exc_info=ex)
 
-            free_employee = list(response.json()["trained"])
+    def get_people_availability(self, shift_id, unavi_employee):
+        """
+        Make request,which return recommendation about employee and shift.
+        Then we process data and get ids recommendation employee,
+        and exclude ids unavailability employee(day-off). From arguments take list of
+        unavailability employee( have a shift ) . We compare which employee
+        have a less work and return his id.
+        :param shift_id: id empty shift
+        :param unavi_employee: list of ids employee who have shift
+        :return: id free employeee
+        """
+        try:
+            response = self._get_recomendation(shift_id)
+
+            free_employee = list(response["trained"])
+            unavilability_employee = list(response["unavailable"])
+            free_employee = list(
+                set(free_employee) -
+                set(unavilability_employee))
+
             if not unavi_employee:  # check if we have all employee free
                 return free_employee[0]
 
@@ -91,19 +148,17 @@ class DeputyClient():
                 return self.check_all_job_employee(unavi_employee)
             return employees[0]
 
-        except IndexError:
+        except (TypeError, IndexError):
             self.log.warning("Not Available employee")
             return False
-        except requests.RequestException as ex:
-            self.log.error(
-                "Unable to send post request to DEPUTY",
-                exc_info=ex)
 
     def get_employee_name(self, id_employee):
         """
-        make get request to deputy,take employee name
-        :param employee_id:
-        :return: name of employee
+        Make get request to deputy roster ,with specific params, which we take from arguments.
+        If response will be successful, return data in json format from response.Process data
+        and return Name of employee, and status code requests
+        :param id_employee: id employee, we wanna get name
+        :return: name of employee , status code
         """
         url = self.__url + 'supervise/employee/' + id_employee
         try:
@@ -116,32 +171,42 @@ class DeputyClient():
             self.log.error(
                 "Unable to send post request to DEPUTY",
                 exc_info=ex)
+            return False
 
-    def get_employee_unavail(self):
+    def _get_request_for_employee_unvail(self):
         """
-         make get request to deputy,take employee unavailability
-        :return: when employee have unavailability
+        Make get request to deputy roster to take data about employee who assigned day off
+        If response will be successful, return data in json format from response.
+        :return: json response
         """
         url = self.__url + 'supervise/unavail/'
         try:
             response = requests.get(url=url, headers=self.__headers, )
-            if not response.json():
-                return False
-            list_of_em = []
-
-            for employee in response.json():
-                employee_id = str(employee["Employee"])
-                title = self._get_area_for_employee(employee_id)
-                if title is False:
-                    return False
-                list_of_em.append(
-                    (employee["StartTime"], employee["EndTime"], title))
-
-            return list_of_em
+            return response.json()
         except requests.RequestException as ex:
             self.log.error(
                 "Unable to send post request to DEPUTY",
                 exc_info=ex)
+
+    def get_employee_unavail(self):
+        """
+        Process data from request.Get time of day-off, and compare if employee with
+        area where his work
+        :return: list with employee have unavailability
+        """
+        response = self._get_request_for_employee_unvail()
+        if not response:
+            return False
+        list_of_em = []
+        for employee in response:
+            employee_id = str(employee["Employee"])
+            title = self._get_area_for_employee(employee_id)
+            if title is False:
+                return False
+            list_of_em.append(
+                (employee["StartTime"], employee["EndTime"], title))
+
+        return list_of_em
 
     def post_params_for_webhook(self, topic, address):
         """
@@ -154,12 +219,17 @@ class DeputyClient():
             "Topic": topic,
             "Enabled": 1,
             "Type": "URL",
-            "Address": self.public_url + address
+            "Address": self.__public_url + address
         }
         url = self.__url + 'resource/Webhook'
         data = self.update_params_for_post_deputy_style(params_for_webhooks)
-        response = requests.post(url=url, headers=self.__headers, data=data)
-        return response.status_code
+        try:
+            response = requests.post(url=url, headers=self.__headers, data=data)
+            return response.status_code
+        except requests.RequestException as ex:
+            self.log.error(
+                "Unable to send post request to DEPUTY",
+                exc_info=ex)
 
     def subscribe_to_webhooks(self):
         """
@@ -181,36 +251,64 @@ class DeputyClient():
                 return False
         return True
 
-    def _verification_webhooks(self,data_for_webhooks):
+    def _verification_webhooks(self, data_for_webhooks):
         """
         make verification , if user already subscribe to webhooks
         :param data_for_webhooks: list of tuple with topic webhook
         :return: bool, false already subscribe , true make post request
         """
         url = self.__url + 'resource/Webhook'
-        response = requests.get(url=url, headers=self.__headers, )
-        for webhook in response.json():
-            for data in data_for_webhooks:
-                if webhook["Topic"] == data[0]:
-                    return False
-        return True
+        try:
+            response = requests.get(url=url, headers=self.__headers, )
+            for webhook in response.json():
+                for data in data_for_webhooks:
+                    if webhook["Topic"] == data[0]:
+                        return False
+            return True
+        except requests.RequestException as ex:
+            self.log.error(
+                "Unable to send post request to DEPUTY",
+                exc_info=ex)
 
     def get_number_of_employee(self, id_location):
         """make GET request to DEPUTY,for all employee
         :return: count of employee
         """
         url = self.__url + 'supervise/employee'
-        response = requests.get(url=url, headers=self.__headers, )
-        count = 0
-        for employee in response.json():
-            if employee["Company"] == int(id_location):
-                count += 1
-        return count
+        try:
+            response = requests.get(url=url, headers=self.__headers, )
+            count = 0
+            for employee in response.json():
+                if employee["Company"] == int(id_location):
+                    count += 1
+            return count
+        except requests.RequestException as ex:
+            self.log.error(
+                "Unable to send post request to DEPUTY",
+                exc_info=ex)
+
+    def _get_request_employee(self, employee_id):
+        """
+        make GET request to DEPUTY,for get info about employee
+        :param employee_id:
+        :return: count of employee
+        """
+        try:
+            url = self.__url + 'supervise/employee/' + employee_id
+            response = requests.get(url=url, headers=self.__headers, )
+            return response.json()
+        except requests.RequestException as ex:
+            self.log.error(
+                "Unable to send post request to DEPUTY",
+                exc_info=ex)
 
     def _get_area_for_employee(self, employee_id):
-        url = self.__url + 'supervise/employee/' + employee_id
-        response = requests.get(url=url, headers=self.__headers, )
-        area_id = str(response.json()["Company"])
+        """
+        Make get request to deputy roster.
+        Compare id location with title for google sheets
+        """
+        response = self._get_request_employee(employee_id)
+        area_id = str(response["Company"])
         title = compare_mapping(area_id, "area")
         if title is False:
             return False

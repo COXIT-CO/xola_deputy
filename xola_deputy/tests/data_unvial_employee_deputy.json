@@ -1,0 +1,34 @@
+[
+    {
+        "Id": 5,
+        "Employee": 1,
+        "Type": 0,
+        "MaxDateRecurringGenerated": null,
+        "StartTime": 1608760800,
+        "EndTime": 1608847200,
+        "Date": "2020-12-24T00:00:00+02:00",
+        "Comment": "",
+        "Schedule": 0,
+        "Creator": 1,
+        "Created": "2020-12-23T16:01:07+02:00",
+        "Modified": "2020-12-23T16:01:07+02:00",
+        "StartTimeLocalized": "2020-12-24T00:00:00+02:00",
+        "EndTimeLocalized": "2020-12-25T00:00:00+02:00",
+        "_DPMetaData": {
+            "System": "EmployeeAvailability",
+            "CreatorInfo": {
+                "Id": 1,
+                "DisplayName": "Ryptic",
+                "EmployeeProfile": 1,
+                "Employee": 1,
+                "Photo": "https://d11hmzhsuwuq9f.cloudfront.net/my/avatar?name=R&width=135&height=135"
+            }
+        },
+        "CreatorObject": {
+            "Id": 1,
+            "EmployeeProfile": 1,
+            "HasEnabled2FA": false,
+            "URL": "https://638cf817080822.eu.deputy.com"
+        }
+    }
+]

@@ -1,0 +1,140 @@
+{
+    "trained": {
+        "1": {
+            "Id": 1,
+            "DisplayName": "Ryptic",
+            "PhotoUrl": "https://d11hmzhsuwuq9f.cloudfront.net/my/avatar?name=R&width=135&height=135",
+            "_DPMetaData": {
+                "System": "Employee",
+                "CreatorInfo": {
+                    "Id": 1,
+                    "DisplayName": "Ryptic",
+                    "EmployeeProfile": 1,
+                    "Employee": 1,
+                    "Photo": "https://d11hmzhsuwuq9f.cloudfront.net/my/avatar?name=R&width=135&height=135"
+                }
+            }
+        },
+        "2": {
+            "Id": 2,
+            "DisplayName": "Chris Singe",
+            "PhotoUrl": "https://d11hmzhsuwuq9f.cloudfront.net/my/avatar?name=C+S&width=135&height=135",
+            "_DPMetaData": {
+                "System": "Employee",
+                "CreatorInfo": {
+                    "Id": 1,
+                    "DisplayName": "Ryptic",
+                    "EmployeeProfile": 1,
+                    "Employee": 1,
+                    "Photo": "https://d11hmzhsuwuq9f.cloudfront.net/my/avatar?name=R&width=135&height=135"
+                }
+            }
+        },
+        "3": {
+            "Id": 3,
+            "DisplayName": "Lula Sincaro",
+            "PhotoUrl": "https://d11hmzhsuwuq9f.cloudfront.net/my/avatar?name=L+S&width=135&height=135",
+            "_DPMetaData": {
+                "System": "Employee",
+                "CreatorInfo": {
+                    "Id": 1,
+                    "DisplayName": "Ryptic",
+                    "EmployeeProfile": 1,
+                    "Employee": 1,
+                    "Photo": "https://d11hmzhsuwuq9f.cloudfront.net/my/avatar?name=R&width=135&height=135"
+                }
+            }
+        },
+        "4": {
+            "Id": 4,
+            "DisplayName": "Varun Thiatra",
+            "PhotoUrl": "https://photo2.deputy.com/deputec_b201217125120_9174/-135x135_9ad871ea72ab7ae191073bc78debc94b.jpg?Expires=1608807464&Key-Pair-Id=APKAINP5UVPK4IGBHXOQ&Signature=epJno3l2~TTB56Rk66hAYvgjd3QKb3U7Cw~-~dSSB1HCnLqiPdZXPemP9pBmsCcpoiPAo9MPnDdhl8qpG6xwmTh0uP6sMXYQakZQ2oxUf7aKp5SK~cuW9RQ9keJqh4hDomg~tcol-NJ8Fd2kN3ywvg4VWCnjTPXan-X4gV1RCEk_",
+            "_DPMetaData": {
+                "System": "Employee",
+                "CreatorInfo": {
+                    "Id": 1,
+                    "DisplayName": "Ryptic",
+                    "EmployeeProfile": 1,
+                    "Employee": 1,
+                    "Photo": "https://d11hmzhsuwuq9f.cloudfront.net/my/avatar?name=R&width=135&height=135"
+                }
+            }
+        }
+    },
+    "preferred": [],
+    "onleave": [],
+    "unavailable": [],
+    "minimum_hours": [],
+    "stressed": [],
+    "alreadyInvited": [],
+    "shiftSwapOverlap": [],
+    "allemps": {
+        "1": {
+            "Id": 1,
+            "DisplayName": "Ryptic",
+            "PhotoUrl": "https://d11hmzhsuwuq9f.cloudfront.net/my/avatar?name=R&width=135&height=135",
+            "_DPMetaData": {
+                "System": "Employee",
+                "CreatorInfo": {
+                    "Id": 1,
+                    "DisplayName": "Ryptic",
+                    "EmployeeProfile": 1,
+                    "Employee": 1,
+                    "Photo": "https://d11hmzhsuwuq9f.cloudfront.net/my/avatar?name=R&width=135&height=135"
+                }
+            },
+            "SelectedMobile": ""
+        },
+        "2": {
+            "Id": 2,
+            "DisplayName": "Chris Singe",
+            "PhotoUrl": "https://d11hmzhsuwuq9f.cloudfront.net/my/avatar?name=C+S&width=135&height=135",
+            "_DPMetaData": {
+                "System": "Employee",
+                "CreatorInfo": {
+                    "Id": 1,
+                    "DisplayName": "Ryptic",
+                    "EmployeeProfile": 1,
+                    "Employee": 1,
+                    "Photo": "https://d11hmzhsuwuq9f.cloudfront.net/my/avatar?name=R&width=135&height=135"
+                }
+            }
+        },
+        "3": {
+            "Id": 3,
+            "DisplayName": "Lula Sincaro",
+            "PhotoUrl": "https://d11hmzhsuwuq9f.cloudfront.net/my/avatar?name=L+S&width=135&height=135",
+            "_DPMetaData": {
+                "System": "Employee",
+                "CreatorInfo": {
+                    "Id": 1,
+                    "DisplayName": "Ryptic",
+                    "EmployeeProfile": 1,
+                    "Employee": 1,
+                    "Photo": "https://d11hmzhsuwuq9f.cloudfront.net/my/avatar?name=R&width=135&height=135"
+                }
+            }
+        },
+        "4": {
+            "Id": 4,
+            "DisplayName": "Varun Thiatra",
+            "PhotoUrl": "https://photo2.deputy.com/deputec_b201217125120_9174/-135x135_9ad871ea72ab7ae191073bc78debc94b.jpg?Expires=1608807464&Key-Pair-Id=APKAINP5UVPK4IGBHXOQ&Signature=epJno3l2~TTB56Rk66hAYvgjd3QKb3U7Cw~-~dSSB1HCnLqiPdZXPemP9pBmsCcpoiPAo9MPnDdhl8qpG6xwmTh0uP6sMXYQakZQ2oxUf7aKp5SK~cuW9RQ9keJqh4hDomg~tcol-NJ8Fd2kN3ywvg4VWCnjTPXan-X4gV1RCEk_",
+            "_DPMetaData": {
+                "System": "Employee",
+                "CreatorInfo": {
+                    "Id": 1,
+                    "DisplayName": "Ryptic",
+                    "EmployeeProfile": 1,
+                    "Employee": 1,
+                    "Photo": "https://d11hmzhsuwuq9f.cloudfront.net/my/avatar?name=R&width=135&height=135"
+                }
+            }
+        }
+    },
+    "error_stacks": {
+        "1": false,
+        "2": false,
+        "3": false,
+        "4": false
+    }
+}

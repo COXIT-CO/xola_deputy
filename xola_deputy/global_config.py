@@ -4,12 +4,15 @@ from os import mkdir, getcwd
 import csv
 import threading
 import time
+import configparser
 
 LOG_DIR = "./logs/"
 FILE_NAME_MAPPING = "mapping.csv"
 DELIMITER = ","
-CONFIG_FILE_NAME = getcwd()+'/Settings.ini'
+CONFIG_FILE_NAME = getcwd() + '/Settings.ini'
 
+config = configparser.ConfigParser()
+config.read(CONFIG_FILE_NAME)
 
 try:
     mkdir(LOG_DIR)
@@ -76,7 +79,8 @@ def compare_mapping(compare_value, key):
                 return exp_dict
     return False
 
-def treade_notification_deamon(func,sec=0, minutes=0, hours=0):
+
+def treade_notification_deamon(func, sec=0, minutes=0, hours=0):
     """This func refresh another func , which change cells in sheets"""
     while True:
         sleep_time = sec + (minutes * 60) + (hours * 3600)
@@ -87,6 +91,6 @@ def treade_notification_deamon(func,sec=0, minutes=0, hours=0):
 def create_tread(func):
     """Create deamon thred for rewrite cells in sheets"""
     enable_notification_thread = threading.Thread(
-        target=treade_notification_deamon, kwargs=({"func":func,"hours": 23}))
+        target=treade_notification_deamon, kwargs=({"func": func, "hours": 23}))
     enable_notification_thread.daemon = True
     enable_notification_thread.start()

@@ -8,10 +8,17 @@ from google_sheets_client import GoogleSheetsClient
 from global_config import create_tread
 
 app = Flask(__name__)
-logging = LoggerClient().get_logger()
+logging = LoggerClient()
+logging.settings_init()
+logging = logging.get_logger()
+
 xola = XolaClient(logging)
+xola.init_settings()
 deputy = DeputyClient(logging)
+deputy.init_settings()
 sheets = GoogleSheetsClient(deputy, logging)
+sheets.init_settings()
+
 
 @app.route("/xola", methods=['POST'])
 def xola_deputy_run():
@@ -25,14 +32,18 @@ def xola_deputy_run():
         return Response(status=500)
     for _ in range(number_shifts):
         # first time we created shift in open block
-        id_shift, date_shift = deputy.post_new_shift(params)
+
+        id_shift, date_shift = deputy.process_data_from_new_shift(params)
+
+        if date_shift is False:
+            return Response(status=500)
 
         date_shift = xola.convert_time(date_shift)
 
         id_location = mapping["Area"]
         title = mapping['Possible Area Nicknames in Production']
 
-        unavailable_employee = deputy.get_people_unavailability(
+        unavailable_employee = deputy.process_people_unavailability(
             date_shift, id_location)[0]  # check who have a work
         if unavailable_employee is False:
             return Response(status=500)
@@ -44,7 +55,8 @@ def xola_deputy_run():
             "intRosterId": id_shift,
             "intRosterEmployee": id_employee
         })
-        is_good = deputy.post_new_shift(params)  # post shift for employee
+        is_good = deputy.process_data_from_new_shift(
+            params)  # post shift for employee
         if is_good is False:
             return Response(status=500)
         sheets.change_cells(
@@ -53,9 +65,7 @@ def xola_deputy_run():
             title)
         logging.info("Successfully post shift, sheets ")
         name_of_employee = deputy.get_employee_name(id_employee)
-        if name_of_employee is False:
-            return Response(status=500)
-        if xola.post_guides_for_event(name_of_employee) is False:
+        if xola.verification_guides_for_event(name_of_employee) is False:
             return Response(status=500)
 
     logging.info("Successfully post guides")
@@ -67,6 +77,8 @@ def xola_deputy_run():
 def deputy_delete():
     """we change all list in google sheet,when in deputy delete employee"""
     sheets.change_all_spread()
+    logging.info("Successfully change sheet")
+
     return Response(status=200)
 
 
@@ -74,6 +86,8 @@ def deputy_delete():
 def deputy_insert():
     """we change all list in google sheet,when in deputy insert employee"""
     sheets.change_all_spread()
+    logging.info("Successfully change sheet")
+
     return Response(status=200)
 
 
@@ -95,6 +109,7 @@ def deputy_unvial():
     for unvial_time in list_of_unvial:
         sheets.change_cells(unvial_time[0], unvial_time[1], unvial_time[2])
 
+    logging.info("Successfully change sheet")
     return Response(status=200)
 
 
