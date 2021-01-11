@@ -1,0 +1,109 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module deputy_client</title>
+<meta charset="utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>deputy_client</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/bear/Documents/workspace/xola_deputy/xola_deputy/deputy_client.py">/Users/bear/Documents/workspace/xola_deputy/xola_deputy/deputy_client.py</a></font></td></tr></table>
+    <p><tt>Have&nbsp;class&nbsp;DeputyCLient,which&nbsp;connect&nbsp;to&nbsp;deputy&nbsp;API&nbsp;and&nbsp;get/post&nbsp;data&nbsp;from&nbsp;here</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="json.html">json</a><br>
+</td><td width="25%" valign=top><a href="requests.html">requests</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="deputy_client.html#DeputyClient">DeputyClient</a>
+</font></dt></dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="DeputyClient">class <strong>DeputyClient</strong></a></font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>"Connect&nbsp;to&nbsp;Deputy&nbsp;API<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="DeputyClient-__init__"><strong>__init__</strong></a>(self, logger)</dt></dl>
+
+<dl><dt><a name="DeputyClient-get_employee_name"><strong>get_employee_name</strong></a>(self, id_employee)</dt><dd><tt>Make&nbsp;get&nbsp;request&nbsp;to&nbsp;deputy&nbsp;roster&nbsp;,with&nbsp;specific&nbsp;params,&nbsp;which&nbsp;we&nbsp;take&nbsp;from&nbsp;arguments.<br>
+If&nbsp;response&nbsp;will&nbsp;be&nbsp;successful,&nbsp;return&nbsp;data&nbsp;in&nbsp;json&nbsp;format&nbsp;from&nbsp;response.Process&nbsp;data<br>
+and&nbsp;return&nbsp;Name&nbsp;of&nbsp;employee,&nbsp;and&nbsp;status&nbsp;code&nbsp;requests<br>
+:param&nbsp;id_employee:&nbsp;id&nbsp;employee,&nbsp;we&nbsp;wanna&nbsp;get&nbsp;name<br>
+:return:&nbsp;name&nbsp;of&nbsp;employee&nbsp;,&nbsp;status&nbsp;code</tt></dd></dl>
+
+<dl><dt><a name="DeputyClient-get_employee_unavail"><strong>get_employee_unavail</strong></a>(self)</dt><dd><tt>Process&nbsp;data&nbsp;from&nbsp;request.Get&nbsp;time&nbsp;of&nbsp;day-off,&nbsp;and&nbsp;compare&nbsp;if&nbsp;employee&nbsp;with<br>
+area&nbsp;where&nbsp;his&nbsp;work<br>
+:return:&nbsp;list&nbsp;with&nbsp;employee&nbsp;have&nbsp;unavailability</tt></dd></dl>
+
+<dl><dt><a name="DeputyClient-get_number_of_employee"><strong>get_number_of_employee</strong></a>(self, id_location)</dt><dd><tt>make&nbsp;GET&nbsp;request&nbsp;to&nbsp;DEPUTY,for&nbsp;all&nbsp;employee<br>
+:return:&nbsp;count&nbsp;of&nbsp;employee</tt></dd></dl>
+
+<dl><dt><a name="DeputyClient-get_people_availability"><strong>get_people_availability</strong></a>(self, shift_id, unavi_employee)</dt><dd><tt>Make&nbsp;request,which&nbsp;return&nbsp;recommendation&nbsp;about&nbsp;employee&nbsp;and&nbsp;shift.<br>
+Then&nbsp;we&nbsp;process&nbsp;data&nbsp;and&nbsp;get&nbsp;ids&nbsp;recommendation&nbsp;employee,<br>
+and&nbsp;exclude&nbsp;ids&nbsp;unavailability&nbsp;employee(day-off).&nbsp;From&nbsp;arguments&nbsp;take&nbsp;list&nbsp;of<br>
+unavailability&nbsp;employee(&nbsp;have&nbsp;a&nbsp;shift&nbsp;)&nbsp;.&nbsp;We&nbsp;compare&nbsp;which&nbsp;employee<br>
+have&nbsp;a&nbsp;less&nbsp;work&nbsp;and&nbsp;return&nbsp;his&nbsp;id.<br>
+:param&nbsp;shift_id:&nbsp;id&nbsp;empty&nbsp;shift<br>
+:param&nbsp;unavi_employee:&nbsp;list&nbsp;of&nbsp;ids&nbsp;employee&nbsp;who&nbsp;have&nbsp;shift<br>
+:return:&nbsp;id&nbsp;free&nbsp;employeee</tt></dd></dl>
+
+<dl><dt><a name="DeputyClient-init_settings"><strong>init_settings</strong></a>(self)</dt><dd><tt>Parser&nbsp;the&nbsp;Settings.ini&nbsp;file,&nbsp;and&nbsp;get&nbsp;parameters&nbsp;for&nbsp;deputy&nbsp;api&nbsp;connection&nbsp;like&nbsp;tokens.<br>
+Assign&nbsp;getting&nbsp;value&nbsp;to&nbsp;class&nbsp;variables</tt></dd></dl>
+
+<dl><dt><a name="DeputyClient-post_params_for_webhook"><strong>post_params_for_webhook</strong></a>(self, topic, address)</dt><dd><tt>make&nbsp;post&nbsp;request&nbsp;to&nbsp;deputy&nbsp;for&nbsp;webhook<br>
+:param&nbsp;topic:&nbsp;what&nbsp;we&nbsp;waiting<br>
+:param&nbsp;address:&nbsp;where&nbsp;data&nbsp;come<br>
+:return:&nbsp;status&nbsp;code&nbsp;of&nbsp;response</tt></dd></dl>
+
+<dl><dt><a name="DeputyClient-process_data_from_new_shift"><strong>process_data_from_new_shift</strong></a>(self, params_for_deputy<font color="#909090">=None</font>)</dt><dd><tt>Make&nbsp;request,&nbsp;get&nbsp;data&nbsp;in&nbsp;json&nbsp;format.<br>
+Process&nbsp;data,&nbsp;and&nbsp;return&nbsp;id&nbsp;new&nbsp;shift&nbsp;witch&nbsp;we&nbsp;created,&nbsp;and<br>
+date&nbsp;this&nbsp;shift&nbsp;in&nbsp;format&nbsp;"year-month-day"<br>
+:param&nbsp;params_for_deputy:&nbsp;parameters&nbsp;to&nbsp;post&nbsp;request<br>
+:return:&nbsp;id&nbsp;new&nbsp;shift,&nbsp;date&nbsp;new&nbsp;shift</tt></dd></dl>
+
+<dl><dt><a name="DeputyClient-process_people_unavailability"><strong>process_people_unavailability</strong></a>(self, date, id_location)</dt><dd><tt>Make&nbsp;get&nbsp;request&nbsp;.&nbsp;Process&nbsp;data&nbsp;from&nbsp;response,&nbsp;get&nbsp;time&nbsp;of&nbsp;all&nbsp;shift,<br>
+and&nbsp;employee&nbsp;who&nbsp;work&nbsp;on&nbsp;this&nbsp;shift<br>
+:param&nbsp;date:&nbsp;date&nbsp;in&nbsp;format&nbsp;"year-month-day"&nbsp;where&nbsp;find&nbsp;all&nbsp;shift<br>
+:param&nbsp;id_location:&nbsp;id&nbsp;location&nbsp;where&nbsp;find&nbsp;shifts<br>
+:return:&nbsp;list&nbsp;of&nbsp;id&nbsp;employee,who&nbsp;have&nbsp;shift&nbsp;,&nbsp;list&nbsp;of&nbsp;tuple&nbsp;with&nbsp;shift&nbsp;time</tt></dd></dl>
+
+<dl><dt><a name="DeputyClient-subscribe_to_webhooks"><strong>subscribe_to_webhooks</strong></a>(self)</dt><dd><tt>make&nbsp;3&nbsp;post&nbsp;request&nbsp;for&nbsp;subscribe&nbsp;webhooks<br>
+:return:&nbsp;true&nbsp;if&nbsp;all&nbsp;good</tt></dd></dl>
+
+<hr>
+Static methods defined here:<br>
+<dl><dt><a name="DeputyClient-check_all_job_employee"><strong>check_all_job_employee</strong></a>(unavailable_employee)</dt><dd><tt>create&nbsp;dictionary&nbsp;where&nbsp;take&nbsp;e&nbsp;less&nbsp;worked&nbsp;employee<br>
+:param&nbsp;unavailable_employee:<br>
+:return:&nbsp;employee&nbsp;who&nbsp;have&nbsp;a&nbsp;less&nbsp;work</tt></dd></dl>
+
+<dl><dt><a name="DeputyClient-update_params_for_post_deputy_style"><strong>update_params_for_post_deputy_style</strong></a>(params)</dt><dd><tt>take&nbsp;python&nbsp;dict&nbsp;and&nbsp;change&nbsp;it&nbsp;for&nbsp;json&nbsp;stringify&nbsp;format<br>
+:param&nbsp;params:&nbsp;python&nbsp;dict<br>
+:return:&nbsp;json&nbsp;stringify</tt></dd></dl>
+
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>HTTP_SUCCESS</strong> = 200<br>
+<strong>config</strong> = &lt;backports.configparser.ConfigParser object&gt;</td></tr></table>
+</body></html>

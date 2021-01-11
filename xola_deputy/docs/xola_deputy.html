@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module xola_deputy</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>xola_deputy</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/bear/Documents/workspace/xola_deputy/xola_deputy/xola_deputy.py">/Users/bear/Documents/workspace/xola_deputy/xola_deputy/xola_deputy.py</a></font></td></tr></table>
+    <p><tt>Main&nbsp;script&nbsp;which&nbsp;start&nbsp;all&nbsp;logic.&nbsp;Here&nbsp;we&nbsp;have&nbsp;2&nbsp;webhooks,<br>
+and&nbsp;process&nbsp;date&nbsp;from&nbsp;request&nbsp;from&nbsp;XOLA&nbsp;and&nbsp;DEPUTY</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-deputy_delete"><strong>deputy_delete</strong></a>()</dt><dd><tt>we&nbsp;change&nbsp;all&nbsp;list&nbsp;in&nbsp;google&nbsp;sheet,when&nbsp;in&nbsp;deputy&nbsp;delete&nbsp;employee</tt></dd></dl>
+ <dl><dt><a name="-deputy_insert"><strong>deputy_insert</strong></a>()</dt><dd><tt>we&nbsp;change&nbsp;all&nbsp;list&nbsp;in&nbsp;google&nbsp;sheet,when&nbsp;in&nbsp;deputy&nbsp;insert&nbsp;employee</tt></dd></dl>
+ <dl><dt><a name="-deputy_unvial"><strong>deputy_unvial</strong></a>()</dt><dd><tt>get&nbsp;all&nbsp;day&nbsp;off&nbsp;from&nbsp;deputy,change&nbsp;specific&nbsp;list,and&nbsp;make&nbsp;minus&nbsp;1&nbsp;to&nbsp;cells</tt></dd></dl>
+ <dl><dt><a name="-xola_deputy_run"><strong>xola_deputy_run</strong></a>()</dt><dd><tt>Take&nbsp;response&nbsp;from&nbsp;xola&nbsp;notification&nbsp;about&nbsp;order.<br>
+Create&nbsp;parameters&nbsp;for&nbsp;deputy&nbsp;POST&nbsp;request&nbsp;with&nbsp;data&nbsp;from&nbsp;XOLA.<br>
+Post&nbsp;new&nbsp;shift&nbsp;with&nbsp;this&nbsp;parameters&nbsp;,&nbsp;and&nbsp;check&nbsp;which&nbsp;employee&nbsp;free.<br>
+:return:&nbsp;code&nbsp;200&nbsp;is&nbsp;all&nbsp;good,&nbsp;code&nbsp;500&nbsp;-&nbsp;arose&nbsp;problem</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>app</strong> = &lt;Flask 'xola_deputy'&gt;<br>
+<strong>deputy</strong> = &lt;deputy_client.DeputyClient object&gt;<br>
+<strong>logging</strong> = &lt;RootLogger root (INFO)&gt;<br>
+<strong>request</strong> = &lt;LocalProxy unbound&gt;<br>
+<strong>sheets</strong> = &lt;google_sheets_client.GoogleSheetsClient object&gt;<br>
+<strong>xola</strong> = &lt;xola_client.XolaClient object&gt;</td></tr></table>
+</body></html>

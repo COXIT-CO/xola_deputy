@@ -1,0 +1,56 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module global_config</title>
+<meta charset="utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>global_config</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/bear/Documents/workspace/xola_deputy/xola_deputy/global_config.py">/Users/bear/Documents/workspace/xola_deputy/xola_deputy/global_config.py</a></font></td></tr></table>
+    <p><tt>Configuration&nbsp;module&nbsp;for&nbsp;logging</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="configparser.html">configparser</a><br>
+<a href="csv.html">csv</a><br>
+</td><td width="25%" valign=top><a href="logging.html">logging</a><br>
+<a href="threading.html">threading</a><br>
+</td><td width="25%" valign=top><a href="time.html">time</a><br>
+</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-compare_mapping"><strong>compare_mapping</strong></a>(compare_value, key)</dt><dd><tt>:param&nbsp;compare_value:&nbsp;value&nbsp;we&nbsp;want&nbsp;to&nbsp;cmpare&nbsp;in&nbsp;mapping&nbsp;csv<br>
+:return:&nbsp;mapping&nbsp;dict&nbsp;in&nbsp;all&nbsp;data</tt></dd></dl>
+ <dl><dt><a name="-create_tread"><strong>create_tread</strong></a>(func)</dt><dd><tt>Create&nbsp;deamon&nbsp;thred&nbsp;for&nbsp;rewrite&nbsp;cells&nbsp;in&nbsp;sheets</tt></dd></dl>
+ <dl><dt><a name="-getcwd"><strong>getcwd</strong></a>(...)</dt><dd><tt><a href="#-getcwd">getcwd</a>()&nbsp;-&gt;&nbsp;path<br>
+&nbsp;<br>
+Return&nbsp;a&nbsp;string&nbsp;representing&nbsp;the&nbsp;current&nbsp;working&nbsp;directory.</tt></dd></dl>
+ <dl><dt><a name="-mkdir"><strong>mkdir</strong></a>(...)</dt><dd><tt><a href="#-mkdir">mkdir</a>(path&nbsp;[,&nbsp;mode=0777])<br>
+&nbsp;<br>
+Create&nbsp;a&nbsp;directory.</tt></dd></dl>
+ <dl><dt><a name="-treade_notification_deamon"><strong>treade_notification_deamon</strong></a>(func, sec<font color="#909090">=0</font>, minutes<font color="#909090">=0</font>, hours<font color="#909090">=0</font>)</dt><dd><tt>This&nbsp;func&nbsp;refresh&nbsp;another&nbsp;func&nbsp;,&nbsp;which&nbsp;change&nbsp;cells&nbsp;in&nbsp;sheets</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>CONFIG_FILE_NAME</strong> = '/Users/bear/Documents/workspace/xola_deputy/xola_deputy/Settings.ini'<br>
+<strong>DELIMITER</strong> = ','<br>
+<strong>FILE_NAME_MAPPING</strong> = 'mapping.csv'<br>
+<strong>LOG_CONFIG</strong> = {'formatters': {'detailed': {'datefmt': '%d/%m/%y - %H:%M:%S', 'format': '[%(asctime)s] [%(levelname)s] - Line: %(lineno)d - %(name)s - : %(message)s.'}, 'simple': {'datefmt': '%H:%M:%S', 'format': '[%(asctime)s] [%(levelname)s] - : %(message)s.'}}, 'handlers': {'console': {'class': 'logging.StreamHandler', 'formatter': 'simple', 'level': 20}, 'file': {'class': 'logging.handlers.TimedRotatingFileHandler', 'filename': './logs/logfile', 'formatter': 'detailed', 'level': 20, 'when': 'midnight'}}, 'root': {'handlers': ['file'], 'level': 20}, 'version': 1}<br>
+<strong>LOG_DIR</strong> = './logs/'<br>
+<strong>config</strong> = &lt;backports.configparser.ConfigParser object&gt;</td></tr></table>
+</body></html>
