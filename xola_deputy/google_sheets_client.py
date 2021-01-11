@@ -1,9 +1,8 @@
 """Google class for process data from deputy and post data to google sheets"""
-import configparser
 from datetime import datetime
 
 from spreadsheet_api import SpreadsheetAPI
-from global_config import compare_mapping, CONFIG_FILE_NAME
+from global_config import compare_mapping, config
 
 START_TIME = " 6:00"  # start time in google sheets
 END_TIME = " 23:30"  # end time in google sheets
@@ -15,14 +14,17 @@ DAYS = 30
 
 class GoogleSheetsClient():
     """This is mediator class, where process data and post to google sheets"""
+    __spreadsheet_id = ""
+    sheets_api = ""
 
     def __init__(self, deputy, logger):
-        config = configparser.ConfigParser()
-        config.read(CONFIG_FILE_NAME)
-        self.spreadsheet_id = config['GOOGLE']['spreadsheet_id']
         self.deputy = deputy
         self.logger = logger
-        self.sheets_api = SpreadsheetAPI(self.spreadsheet_id)
+
+    def init_settings(self):
+        """Parser the Settings.ini file, and get parameters for google sheets connection"""
+        self.__spreadsheet_id = config['GOOGLE']['spreadsheet_id']
+        self.sheets_api = SpreadsheetAPI(self.__spreadsheet_id)
 
     def change_sheets(self, count_of_days, id_location):
         """
@@ -42,9 +44,8 @@ class GoogleSheetsClient():
             while date_start <= date_end:
                 list_of_free_employee.append([date_start, number_of_employee])
                 date_start = date_start + DELAY
-            time_of_shits = self.deputy.get_people_unavailability(
+            time_of_shits = self.deputy.process_people_unavailability(
                 date_shift, id_location)[1]
-
             self.calculation_unavailability_count(
                 time_of_shits, list_of_free_employee)
 
@@ -63,7 +64,11 @@ class GoogleSheetsClient():
         :param end_time: unix time end changed
         :param title: title of list in google sheets
         """
-        self.sheets_api.change_multiple_ranges_by_value(title,start_time,end_time,-1)
+        start_time = self._convert_for_30_minutes(start_time, False)
+        end_time = self._convert_for_30_minutes(end_time)
+
+        self.sheets_api.change_multiple_ranges_by_value(
+            title, start_time, end_time, -1)
 
     def change_all_spread(self):
         """
@@ -97,6 +102,24 @@ class GoogleSheetsClient():
         for lists in all_settings_sheets:
             title_of_all_lists.append(lists['properties']['title'])
         return title_of_all_lists
+
+    @staticmethod
+    def _convert_for_30_minutes(time, key=True):
+        """
+        User google sheets list have 30 minutes cells,so
+        if shift start not in :00 or :30 we modification this
+        (e.g start shift in 13:32 , modification = 13:30)
+        :param time: unix time
+        :param key: if wonna add cell = True, if minus cell =False
+        """
+        mod = time % DELAY
+        time = time - mod
+        if mod != 0:
+            if key:
+                time += DELAY
+            else:
+                time -= DELAY
+        return time
 
     @staticmethod
     def calculation_unavailability_count(time_of_shits, list_of_free_employee):

@@ -50,7 +50,6 @@ def initialize_variables():
     config.add_section('GOOGLE')
     config['GOOGLE']['spreadsheet_id'] = namespace.spreadsheet_id
 
-
     with open('xola_deputy/Settings.ini', 'w') as configfile:  # save
         config.write(configfile)
 

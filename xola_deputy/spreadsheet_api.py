@@ -96,12 +96,16 @@ class SpreadsheetAPI:
             with open(TOKEN_PATH, 'wb') as token:
                 pickle.dump(creds, token)
 
-        self.spreadsheet_service = build('sheets', 'v4', credentials=creds).spreadsheets()
+        self.spreadsheet_service = build(
+            'sheets', 'v4', credentials=creds).spreadsheets()
         self.spreadsheet_id = spreadsheet_id
 
-        values = self._read_data(self.spreadsheet_service.get(
-            spreadsheetId=self.spreadsheet_id
-        ).execute().get('sheets', '')[0]['properties']['title'] + '!A1:ZZZ1000')
+        values = self._read_data(
+            self.spreadsheet_service.get(
+                spreadsheetId=self.spreadsheet_id).execute().get(
+                'sheets',
+                '')[0]['properties']['title'] +
+            '!A1:ZZZ1000')
 
         self.time_values = values[0]
         self.date_values = [i[0] for i in values]
@@ -134,7 +138,8 @@ class SpreadsheetAPI:
         Return value from cell if date is valid, in another case - return None
         """
         time_index, date_index = self._get_cell_indexes_by_timestamp(date)
-        range_name = self._create_range_name(sheet_title, time_index, date_index)
+        range_name = self._create_range_name(
+            sheet_title, time_index, date_index)
 
         if range_name is None:
             return None
@@ -163,7 +168,8 @@ class SpreadsheetAPI:
         """
 
         time_index, date_index = self._get_cell_indexes_by_timestamp(date)
-        range_name = self._create_range_name(sheet_title, time_index, date_index)
+        range_name = self._create_range_name(
+            sheet_title, time_index, date_index)
 
         if range_name is None:
             return None
@@ -210,8 +216,7 @@ class SpreadsheetAPI:
         try:
             result = self.spreadsheet_service.batchUpdate(
                 spreadsheetId=self.spreadsheet_id,
-                body=
-                {
+                body={
                     "requests": [
                         {
                             "addSheet": {
@@ -260,7 +265,8 @@ class SpreadsheetAPI:
         Return int indexes of row and column of cell in sheet
         """
 
-        spreadsheet_date = datetime.fromtimestamp(date).strftime('%A, %B %-d, %Y')
+        spreadsheet_date = datetime.fromtimestamp(
+            date).strftime('%A, %B %-d, %Y')
         spreadsheet_time = datetime.fromtimestamp(date).strftime('%-I:%M %p')
 
         time_index, date_index = 0, 0
@@ -341,12 +347,15 @@ class SpreadsheetAPI:
         }
 
         result = self.spreadsheet_service.values().update(
-            spreadsheetId=self.spreadsheet_id, range=range_name, valueInputOption='RAW',
+            spreadsheetId=self.spreadsheet_id,
+            range=range_name,
+            valueInputOption='RAW',
             body=value_body).execute()
         rows = result.get('values')
         return rows
 
-    def change_multiple_ranges_by_value(self, sheet_title, time_start, time_end, value):
+    def change_multiple_ranges_by_value(
+            self, sheet_title, time_start, time_end, value):
         """
         Parameters
         ----------
@@ -364,8 +373,10 @@ class SpreadsheetAPI:
         """
         range_names = []
         while time_start <= time_end:
-            time_index, date_index = self._get_cell_indexes_by_timestamp(time_start)
-            range_name_tmp = self._create_range_name(sheet_title, time_index, date_index)
+            time_index, date_index = self._get_cell_indexes_by_timestamp(
+                time_start)
+            range_name_tmp = self._create_range_name(
+                sheet_title, time_index, date_index)
 
             if range_name_tmp:
                 range_names.append(range_name_tmp)
@@ -411,7 +422,8 @@ class SpreadsheetAPI:
             value = data_item[1]
 
             time_index, date_index = self._get_cell_indexes_by_timestamp(date)
-            range_name = self._create_range_name(sheet_title, time_index, date_index)
+            range_name = self._create_range_name(
+                sheet_title, time_index, date_index)
             if range_name is None:
                 continue
 
