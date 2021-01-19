@@ -10,12 +10,9 @@ jobs:
       - checkout
       - python/load-cache
       - run:
-          command: pip install -r requirements.txt
+          command: pip install --user -r requirements.txt
           name: Python install dependencies 
       - python/save-cache
-      - run:
-          command: python pytest /
-          name: Test
 
 workflows:
   main:
