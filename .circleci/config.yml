@@ -10,7 +10,7 @@ jobs:
       - checkout
       - python/load-cache
       - run:
-          command: pip install requirements.txt
+          command: pip install -r requirements.txt
           name: Python install dependencies 
       - python/save-cache
       - run:
