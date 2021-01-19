@@ -9,10 +9,12 @@ jobs:
     steps:
       - checkout
       - python/load-cache
-      - python/install-deps
+      - run:
+          command: pip install requirements.txt
+          name: Python install dependencies 
       - python/save-cache
       - run:
-          command: ./manage.py test
+          command: python pytest /
           name: Test
 
 workflows:
